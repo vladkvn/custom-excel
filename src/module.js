@@ -1,0 +1,1 @@
+setTimeout(()=> console.log("MODULE IMPORTED"), 2000);
