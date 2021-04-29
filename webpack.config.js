@@ -55,12 +55,10 @@ module.exports = (env, argv) => {
             ]
         }
     }
-    if (isDev) {
-        config["devServer"] = {
-            contentBase: './dist',
-            host: "localhost",
-            port: "8081"
-        }
+    config.devServer = {
+        contentBase: './dist',
+        host: "localhost",
+        port: "8083"
     }
     return config;
 };
