@@ -10,7 +10,7 @@ module.exports = (env, argv) => {
     const isDev = !isProd;
     const fileName = (postfix) => isDev ? `[name].bundle.${postfix}` : `[name].[contenthash].bundle.${postfix}`
 
-    return {
+    var config = {
         context: path.resolve(__dirname, "src"),
         entry: {
             main: './index.js'
@@ -55,4 +55,12 @@ module.exports = (env, argv) => {
             ]
         }
     }
+    if (isDev) {
+        config["devServer"] = {
+            contentBase: './dist',
+            host: "localhost",
+            port: "8081"
+        }
+    }
+    return config;
 };
