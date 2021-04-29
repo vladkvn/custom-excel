@@ -2,6 +2,7 @@ const path = require("path")
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const distFolder = path.resolve(__dirname, 'dist')
 module.exports = (env, argv) => {
@@ -30,7 +31,8 @@ module.exports = (env, argv) => {
             }),
             new MiniCssExtractPlugin({
                 filename: fileName('css')
-            })
+            }),
+            new ESLintPlugin()
         ],
         module: {
             rules: [
