@@ -1,2 +1,10 @@
 @import 'variables';
 @import 'mixins';
+
+.excel__table {
+  position: fixed;
+  top: $header-height + $toolbar-height + 1;
+  height: 800px;
+  width: 100%;
+  background-color: #ffffff;
+}

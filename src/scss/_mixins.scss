@@ -1,5 +1,6 @@
 @mixin button($color: $default_color, $active-color: $default_active-color, $hover-bg-color: #e2e2e2) {
-  height: 24px;
+  $clicked-color: $hover-bg-color;
+  height: 100%;
   min-width: 24px;
   padding: 0 5px 0;
   text-align: center;
@@ -19,4 +20,14 @@
   &:active {
     color: $active-color;
   }
+
+  &.clicked {
+    background-color: $clicked-color;
+    color: $active-color;
+  }
+}
+
+@mixin button-container() {
+  display: flex;
+  height: 24px;
 }

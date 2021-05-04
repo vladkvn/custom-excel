@@ -2,7 +2,7 @@
 @import 'mixins';
 
 .excel__header {
-  position: absolute;
+  position: fixed;
   height: $header-height;
   top: 0;
   left: 0;
@@ -37,7 +37,7 @@
   }
 
   .button-container {
-    display: flex;
+    @include button-container();
   }
 
   .button {
