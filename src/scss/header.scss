@@ -13,27 +13,7 @@
   background-color: #e2f0ff;
 
   .input {
-    margin: 0;
-    padding: 2px 7px;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    height: 20px;
-    font-size: 18px;
-    line-height: 22px;
-    outline: none;
-    color: #8e8e8e;
-    overflow: hidden;
-    background-color: inherit;
-
-    &:hover {
-      border: 1px solid $default-hover-color;
-    }
-
-    &:focus {
-      border: 2px solid $default_active-color;
-      background-color: #ffffff;
-      color: #000000;
-    }
+    @include input();
   }
 
   .button-container {
