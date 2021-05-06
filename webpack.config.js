@@ -9,11 +9,9 @@ module.exports = (env, argv) => {
     const isProd = argv.mode === 'production';
     const isDev = !isProd;
     const fileName = (postfix) => isDev ? `[name].bundle.${postfix}` : `[name].[contenthash].bundle.${postfix}`;
-    const config = {
+    return {
         context: path.resolve(__dirname, 'src'),
-        entry: {
-            main: './index.js'
-        },
+        entry: ['./main.js', './index.js'],
         output: {
             path: distFolder,
             filename: fileName('js'),
@@ -56,12 +54,11 @@ module.exports = (env, argv) => {
                     }
                 }
             ]
+        },
+        devServer: {
+            contentBase: './dist',
+            host: 'localhost',
+            port: '8085'
         }
     };
-    config.devServer = {
-        contentBase: './dist',
-        host: 'localhost',
-        port: '8083'
-    };
-    return config;
 };

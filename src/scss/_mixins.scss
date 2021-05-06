@@ -1,3 +1,5 @@
+@import 'variables';
+
 @mixin button($color: $default_color, $active-color: $default_active-color, $hover-bg-color: #e2e2e2) {
   $clicked-color: $hover-bg-color;
   height: 100%;
