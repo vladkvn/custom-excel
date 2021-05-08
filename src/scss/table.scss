@@ -22,10 +22,11 @@
     justify-content: center;
     align-items: center;
     min-width: $info-cell-width;
-    height: 100%;
     border: 1px solid $border-color;
     background-color: #f8f9fa;
     border-top: none;
+    height: inherit;
+    cursor: default;
   }
 
   .column {
@@ -39,6 +40,7 @@
     border: 1px solid $border-color;
     border-top: none;
     border-left: none;
+    cursor: default;
   }
 
   .row-data {

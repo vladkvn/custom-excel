@@ -8,6 +8,15 @@ module.exports = {
     rules: {
         'comma-dangle': 'off',
         'indent': ['error', 4],
-        'max-len': ['error', 120]
+        'max-len': ['error', 120],
+        'require-jsdoc': ['error', {
+            'require': {
+                'FunctionDeclaration': false,
+                'MethodDefinition': false,
+                'ClassDeclaration': false,
+                'ArrowFunctionExpression': false,
+                'FunctionExpression': false
+            }
+        }]
     }
 };
