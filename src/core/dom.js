@@ -28,6 +28,13 @@ class Dom {
         return this;
     }
 
+    removeChild(child) {
+        if (child instanceof Dom) {
+            child = child.$el;
+        }
+        this.$el.removeChild(child);
+    }
+
     append(node) {
         if (node instanceof Dom) {
             node = node.$el;
@@ -41,11 +48,22 @@ class Dom {
 
         return this;
     }
+
+    css(style = {}) {
+        const styleList = Object.keys(style).map((key)=>{
+            const mapResult = {};
+            mapResult.key = key;
+            mapResult.value = style[key];
+            return mapResult;
+        });
+        styleList.forEach((style)=> this.$el.style = `${style.key}: ${style.value}`);
+        return this;
+    }
 }
 
 // event.target
-export function $(selector) {
-    return new Dom(selector);
+export function $(selector, all=true) {
+    return new Dom(selector, all);
 }
 
 $.create = (tagName, classes = '') => {
@@ -54,4 +72,13 @@ $.create = (tagName, classes = '') => {
         el.classList.add(classes);
     }
     return $(el);
+};
+
+
+$.all = (selector) => {
+    const result = [];
+    document.querySelectorAll(selector).forEach((foundElement)=>{
+        result.push($(foundElement));
+    });
+    return result;
 };

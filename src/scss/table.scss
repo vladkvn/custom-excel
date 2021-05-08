@@ -27,6 +27,7 @@
     border-top: none;
     height: inherit;
     cursor: default;
+    position: relative;
   }
 
   .column {
@@ -41,6 +42,7 @@
     border-top: none;
     border-left: none;
     cursor: default;
+    position: relative;
   }
 
   .row-data {
@@ -64,5 +66,48 @@
       outline: 2px solid #5087ff;
       z-index: 2;
     }
+  }
+
+
+  .col-resize, .row-resize {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: 0;
+
+    &:hover {
+      opacity: 1;
+      background-color: $default-hover-color;
+    }
+  }
+
+  .col-resize {
+    top: 0;
+    width: 3px;
+    cursor: col-resize;
+  }
+
+  .row-resize {
+    left: 0;
+    cursor: row-resize;
+    height: 3px;
+  }
+
+  .resizer-row, .resizer-col {
+    background-color: $default-hover-color;
+  }
+
+  .resizer-row {
+    height: 3px;
+    left: 0;
+    right: 0;
+    position: fixed;
+  }
+
+  .resizer-col {
+    width: 3px;
+    top: 0;
+    bottom: 0;
+    position: absolute;
   }
 }

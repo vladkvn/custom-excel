@@ -5,18 +5,37 @@ const CODES = {
 
 const alphabetSize = CODES['Z'] - CODES['A'] + 1;
 
-function createCell(content, className = 'cell') {
-    return `<div class="${className}" contenteditable="${className !== 'column'}">${content || ''}</div>`;
+function createCell(content, className = 'cell', index) {
+    return `<div data-cell-col-index=${index} class="${className}" contenteditable="true">${content || '' }</div>`;
 }
 
-function toColumnHeaderCell(content) {
-    return createCell(content, 'column');
+function toColumnHeaderCell(content, index) {
+    return `
+    <div class="column" data-cell-col-index=${index}>
+        ${content || ''}
+        <div class="col-resize" data-resize="col" data-col-index=${index}>
+        </div>
+    </div>`;
 }
 
-function createRow(content, rowInfo='') {
+function createRow(content, index) {
+    return `
+        <div class="row" data-row-index=${index}>
+            <div class="row-info">
+                ${index}
+                <div class="row-resize" data-resize="row" data-row-resize-index=${index}></div>
+            </div>
+            <div class="row-data">
+                ${content}
+            </div>
+        </div>
+        `;
+}
+
+function createFirstRow(content) {
     return `
         <div class="row">
-            <div class="row-info">${rowInfo}</div>
+            <div class="row-info"></div>
             <div class="row-data">
                 ${content}
             </div>
@@ -31,7 +50,7 @@ export function createTable(rowsCount= 20, columnsCount = alphabetSize - 1) {
         .map(toHeaderValue)
         .map(toColumnHeaderCell)
         .join('');
-    rows.push(createRow(headerCols));
+    rows.push(createFirstRow(headerCols));
     for (let i = 0; i < rowsCount; i++) {
         const rowCells = new Array(columnsCount + 1)
             .fill('')
@@ -54,10 +73,9 @@ function toHeaderValue(_, index) {
             accumulator = 0;
         }
     } while (accumulator > 0);
-    console.log(res);
     return res;
 }
 
-function toCell(_, __) {
-    return createCell('', 'cell');
+function toCell(_, index) {
+    return createCell('', 'cell', index);
 }
