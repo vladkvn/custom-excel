@@ -1,6 +1,6 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {createTable} from './table.template';
-import {TableResizer} from './TableResizer';
+import {ResizeManager} from './TableResizer';
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
@@ -10,7 +10,10 @@ export class Table extends ExcelComponent {
           name: 'Table',
           listeners: ['mousedown', 'mouseup', 'mousemove']
       });
-      this.resizer = undefined;
+      const resizerManager = new ResizeManager(this);
+      this.onMousedownListeners = [resizerManager];
+      this.onMouseupListeners = [resizerManager];
+      this.onMousemoveListeners = [resizerManager];
   }
 
   toHTML() {
@@ -18,25 +21,14 @@ export class Table extends ExcelComponent {
   }
 
   onMousedown(event) {
-      const resizerType = event.target.dataset.resize;
-      if (resizerType) {
-          console.log('start resizing ' + resizerType);
-          console.log(event);
-          this.resizer = new TableResizer(this.$root, resizerType, event);
-      }
+      this.onMousedownListeners.forEach((listener) => listener.onMousedown(event));
   }
 
   onMouseup() {
-      if (this.resizer) {
-          this.resizer.resize();
-          this.resizer.remove();
-          this.resizer = undefined;
-      }
+      this.onMouseupListeners.forEach((listener) => listener.onMouseup(event));
   }
 
   onMousemove(event) {
-      if (this.resizer) {
-          this.resizer.move(event.pageX, event.pageY);
-      }
+      this.onMousemoveListeners.forEach((listener) => listener.onMousemove(event));
   }
 }

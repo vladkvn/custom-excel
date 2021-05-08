@@ -35,6 +35,12 @@ class Dom {
         this.$el.removeChild(child);
     }
 
+    addClass(classes) {
+        this.$el.classList.add(classes);
+        return this;
+    }
+
+
     append(node) {
         if (node instanceof Dom) {
             node = node.$el;

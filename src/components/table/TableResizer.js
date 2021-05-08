@@ -1,6 +1,36 @@
 import {$} from '../../core/dom';
 
-export class TableResizer {
+export class ResizeManager {
+    constructor(table) {
+        this.resizer = undefined;
+        this.$root = table.$root;
+    }
+
+    onMousedown(event) {
+        const resizerType = event.target.dataset.resize;
+        if (resizerType) {
+            console.log('start resizing ' + resizerType);
+            console.log(event);
+            this.resizer = new TableResizer(this.$root, resizerType, event);
+        }
+    }
+
+    onMouseup() {
+        if (this.resizer) {
+            this.resizer.resize();
+            this.resizer.remove();
+            this.resizer = undefined;
+        }
+    }
+
+    onMousemove(event) {
+        if (this.resizer) {
+            this.resizer.move(event.pageX, event.pageY);
+        }
+    }
+}
+
+class TableResizer {
     constructor($parent, type, event) {
         this.$el = $.create('div', `resizer-${type}`);
         this.$parent = $parent;
