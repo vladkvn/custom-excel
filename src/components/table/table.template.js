@@ -5,15 +5,20 @@ const CODES = {
 
 const alphabetSize = CODES['Z'] - CODES['A'] + 1;
 
-function createCell(content, className = 'cell', index) {
-    return `<div data-cell-col-index=${index} class="${className}" contenteditable="true">${content || '' }</div>`;
+function createCell(content, className = 'cell', rowIndex, colIndex) {
+    return `<div
+                data-col-index=${colIndex}
+                data-cell-row-index=${rowIndex}
+                class="${className}"
+                contenteditable="true">${content || '' }
+            </div>`;
 }
 
 function toColumnHeaderCell(content, index) {
     return `
-    <div class="column" data-cell-col-index=${index}>
+    <div class="column" data-col-index=${index}>
         ${content || ''}
-        <div class="col-resize" data-resize="col" data-col-index=${index}>
+        <div class="col-resize" data-resize="col" data-target-col-index=${index}>
         </div>
     </div>`;
 }
@@ -23,7 +28,7 @@ function createRow(content, index) {
         <div class="row" data-row-index=${index}>
             <div class="row-info">
                 ${index}
-                <div class="row-resize" data-resize="row" data-row-resize-index=${index}></div>
+                <div class="row-resize" data-resize="row" data-target-row-index=${index}></div>
             </div>
             <div class="row-data">
                 ${content}
@@ -54,7 +59,7 @@ export function createTable(rowsCount= 20, columnsCount = alphabetSize - 1) {
     for (let i = 0; i < rowsCount; i++) {
         const rowCells = new Array(columnsCount + 1)
             .fill('')
-            .map(toCell)
+            .map((_, index)=>toCell(_, i, index))
             .join('');
         rows.push(createRow(rowCells, i+1));
     }
@@ -76,6 +81,6 @@ function toHeaderValue(_, index) {
     return res;
 }
 
-function toCell(_, index) {
-    return createCell('', 'cell', index);
+function toCell(_, rowIndex, colIndex) {
+    return createCell('', 'cell', rowIndex, colIndex);
 }

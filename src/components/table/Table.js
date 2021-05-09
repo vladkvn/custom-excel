@@ -1,6 +1,7 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {createTable} from './table.template';
 import {ResizeManager} from './TableResizer';
+import {SelectorManager} from './CellSelector';
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
@@ -11,9 +12,11 @@ export class Table extends ExcelComponent {
           listeners: ['mousedown', 'mouseup', 'mousemove']
       });
       const resizerManager = new ResizeManager(this);
+      const selectorManager = new SelectorManager(this);
       this.onMousedownListeners = [resizerManager];
       this.onMouseupListeners = [resizerManager];
       this.onMousemoveListeners = [resizerManager];
+      console.log(selectorManager);
   }
 
   toHTML() {
@@ -25,7 +28,7 @@ export class Table extends ExcelComponent {
   }
 
   onMouseup() {
-      this.onMouseupListeners.forEach((listener) => listener.onMouseup(event));
+      this.onMouseupListeners.forEach((listener) => listener.onMouseup());
   }
 
   onMousemove(event) {

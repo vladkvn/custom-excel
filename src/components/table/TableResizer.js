@@ -69,8 +69,8 @@ class TableResizer {
     resizeColumn() {
         const initialWidth = this.target.parentElement.offsetWidth;
         const newWidth = initialWidth + (this.x - this.startX);
-        const colIndex = this.target.dataset.colIndex;
-        const targetCells = $.all(`div[data-cell-col-index$="${colIndex}"]`);
+        const colIndex = this.target.dataset.targetColIndex;
+        const targetCells = $.all(`div[data-col-index$="${colIndex}"]`);
         targetCells.forEach((cell)=>
             cell.css({width: `${newWidth}px`})
         );
@@ -79,7 +79,7 @@ class TableResizer {
     resizeRow() {
         const initialHeight = this.target.parentElement.offsetHeight;
         const newHeight = initialHeight + (this.y - this.startY);
-        const rowIndex = this.target.dataset.rowResizeIndex;
+        const rowIndex = this.target.dataset.targetRowIndex;
         const targetRow = $(`div[data-row-index$="${rowIndex}"]`);
         targetRow.css({height: `${newHeight}px`});
     }
