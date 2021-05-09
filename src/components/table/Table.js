@@ -9,13 +9,14 @@ export class Table extends ExcelComponent {
   constructor($root) {
       super($root, {
           name: 'Table',
-          listeners: ['mousedown', 'mouseup', 'mousemove']
+          listeners: ['mousedown', 'mouseup', 'mousemove', 'keydown']
       });
       const resizerManager = new ResizeManager(this);
       const selectorManager = new SelectorManager(this);
       this.onMousedownListeners = [resizerManager, selectorManager];
       this.onMouseupListeners = [resizerManager, selectorManager];
       this.onMousemoveListeners = [resizerManager, selectorManager];
+      this.onKeydownListeners = [selectorManager];
   }
 
   toHTML() {
@@ -32,5 +33,9 @@ export class Table extends ExcelComponent {
 
   onMousemove(event) {
       this.onMousemoveListeners.forEach((listener) => listener.onMousemove(event));
+  }
+
+  onKeydown(event) {
+      this.onKeydownListeners.forEach((listener) => listener.onKeydown(event));
   }
 }

@@ -18,11 +18,6 @@ class Dom {
         return this;
     }
 
-    addClasses(...classes) {
-        this.$el.classList.add(classes);
-        return this;
-    }
-
     removeClass(className) {
         this.$el.classList.remove(className);
         return this;
