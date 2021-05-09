@@ -13,10 +13,9 @@ export class Table extends ExcelComponent {
       });
       const resizerManager = new ResizeManager(this);
       const selectorManager = new SelectorManager(this);
-      this.onMousedownListeners = [resizerManager];
-      this.onMouseupListeners = [resizerManager];
-      this.onMousemoveListeners = [resizerManager];
-      console.log(selectorManager);
+      this.onMousedownListeners = [resizerManager, selectorManager];
+      this.onMouseupListeners = [resizerManager, selectorManager];
+      this.onMousemoveListeners = [resizerManager, selectorManager];
   }
 
   toHTML() {
@@ -27,8 +26,8 @@ export class Table extends ExcelComponent {
       this.onMousedownListeners.forEach((listener) => listener.onMousedown(event));
   }
 
-  onMouseup() {
-      this.onMouseupListeners.forEach((listener) => listener.onMouseup());
+  onMouseup(event) {
+      this.onMouseupListeners.forEach((listener) => listener.onMouseup(event));
   }
 
   onMousemove(event) {

@@ -9,8 +9,6 @@ export class ResizeManager {
     onMousedown(event) {
         const resizerType = event.target.dataset.resize;
         if (resizerType) {
-            console.log('start resizing ' + resizerType);
-            console.log(event);
             this.resizer = new TableResizer(this.$root, resizerType, event);
         }
     }
@@ -70,7 +68,7 @@ class TableResizer {
         const initialWidth = this.target.parentElement.offsetWidth;
         const newWidth = initialWidth + (this.x - this.startX);
         const colIndex = this.target.dataset.targetColIndex;
-        const targetCells = $.all(`div[data-col-index$="${colIndex}"]`);
+        const targetCells = $.all(`div[data-cell-x$="${colIndex}"]`);
         targetCells.forEach((cell)=>
             cell.css({width: `${newWidth}px`})
         );

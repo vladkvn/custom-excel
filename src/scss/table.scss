@@ -63,10 +63,8 @@
     border-left: none;
     padding: 7px 5px 0;
     outline: none;
-    &.selected {
-      border: none;
-      outline: 2px solid #5087ff;
-      z-index: 2;
+    &.preselected {
+      background-color: #E2F0FF;
     }
   }
 
