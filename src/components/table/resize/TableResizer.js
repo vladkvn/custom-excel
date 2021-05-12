@@ -1,37 +1,23 @@
-import {$} from '../../core/dom';
+import {$} from '../../../core/dom';
+import {DomListener} from '../../../core/DomListener';
+import {ResizeResult} from './ResizeResult';
 
-export class ResizeManager {
-    constructor(table) {
-        this.resizer = undefined;
-        this.$root = table.$root;
-    }
 
-    onMousedown(event) {
-        const resizerType = event.target.dataset.resize;
-        if (resizerType) {
-            this.resizer = new TableResizer(this.$root, resizerType, event);
-        }
-    }
-
-    onMouseup() {
-        if (this.resizer) {
-            this.resizer.resize();
-            this.resizer.remove();
-            this.resizer = undefined;
-        }
-    }
-
-    onMousemove(event) {
-        if (this.resizer) {
-            this.resizer.move(event.pageX, event.pageY);
-        }
-    }
+export function resize(table, event) {
+    // eslint-disable-next-line no-undef
+    const promise = new Promise((resolve)=>{
+        new Resizer(table, event, resolve);
+    });
+    promise.then((result)=> table.eventBus.publish('resize', result));
+    return promise;
 }
 
-class TableResizer {
-    constructor($parent, type, event) {
+export class Resizer extends DomListener {
+    constructor(table, event, resolve) {
+        const type = event.target.dataset.resize;
+        super(table.$root, ['mouseup', 'mousemove']);
         this.$el = $.create('div', `resizer-${type}`);
-        this.$parent = $parent;
+        this.$parent = table.$root;
         this.type = type;
         this.move(event.pageX, event.pageY);
         this.$parent.append(this.$el);
@@ -40,6 +26,21 @@ class TableResizer {
         this.x = event.pageX;
         this.y = event.pageY;
         this.target = event.target;
+        this.$root = table.$root;
+        this.resolve = resolve;
+        this.initDomListeners();
+        this.newValue = 0;
+    }
+
+    onMouseup() {
+        this.resize();
+        this.remove();
+        this.removeDomListeners();
+        this.resolve(new ResizeResult(this.type, this.newValue));
+    }
+
+    onMousemove(event) {
+        this.move(event.pageX, event.pageY);
     }
 
     move(x, y) {
@@ -66,20 +67,20 @@ class TableResizer {
 
     resizeColumn() {
         const initialWidth = this.target.parentElement.offsetWidth;
-        const newWidth = initialWidth + (this.x - this.startX);
+        this.newValue = initialWidth + (this.x - this.startX);
         const colIndex = this.target.dataset.targetColIndex;
         const targetCells = $.all(`div[data-cell-x$="${colIndex}"]`);
         targetCells.forEach((cell)=>
-            cell.css({width: `${newWidth}px`})
+            cell.css({width: `${this.newValue}px`})
         );
     }
 
     resizeRow() {
         const initialHeight = this.target.parentElement.offsetHeight;
-        const newHeight = initialHeight + (this.y - this.startY);
+        this.newValue = initialHeight + (this.y - this.startY);
         const rowIndex = this.target.dataset.targetRowIndex;
         const targetRow = $(`div[data-row-index$="${rowIndex}"]`);
-        targetRow.css({height: `${newHeight}px`});
+        targetRow.css({height: `${this.newValue}px`});
     }
 
     remove() {
