@@ -24,24 +24,29 @@ export class SelectorManager {
     }
 
     onKeydown(event) {
-        if (!this.selector.selectionMode) {
-            console.log(event.key);
-            switch (event.key) {
-            case 'ArrowDown':
-                this.selector.arrowDown();
-                break;
-            case 'ArrowUp':
-                this.selector.arrowUp();
-                break;
-            case 'ArrowLeft':
-                this.selector.arrowLeft();
-                break;
-            case 'ArrowRight':
-                this.selector.arrowRight();
-                break;
-            case 'Tab':
-                this.selector.tab();
-            }
+        if (this.selector.selectionMode) {
+            return;
+        }
+        console.log(event.key);
+        switch (event.key) {
+        case 'ArrowDown':
+            this.selector.arrowDown();
+            break;
+        case 'ArrowUp':
+            this.selector.arrowUp();
+            break;
+        case 'ArrowLeft':
+            this.selector.arrowLeft();
+            break;
+        case 'ArrowRight':
+            this.selector.arrowRight();
+            break;
+        case 'Tab':
+            this.selector.tab(event);
+            break;
+        case 'Enter':
+            this.selector.enter(event);
+            break;
         }
     }
 
@@ -77,8 +82,12 @@ class CellSelector {
         this.selectionMode = false;
         this.preselectedCells = [];
         this.selectedCells = [];
-        this.focusX = 0;
-        this.focusY = 0;
+        this.focusX = 1;
+        this.focusY = 1;
+        this.x1 = 1;
+        this.x2 = 1;
+        this.y1 = 1;
+        this.y2 = 1;
     }
 
     startSelecting(cellInfo) {
@@ -143,6 +152,7 @@ class CellSelector {
         clearSelectedCellsBackground(this.selectedCells);
         this.selectedCells = [];
         this.updateActiveIndicates(this.focusX + 1, this.focusY);
+        this.x1 = this.x2 = this.focusX;
         this.updateActiveCell();
     }
 
@@ -150,6 +160,7 @@ class CellSelector {
         clearSelectedCellsBackground(this.selectedCells);
         this.selectedCells = [];
         this.updateActiveIndicates(this.focusX, this.focusY + 1);
+        this.y1 = this.y2 = this.focusY;
         this.updateActiveCell();
     }
 
@@ -157,6 +168,7 @@ class CellSelector {
         clearSelectedCellsBackground(this.selectedCells);
         this.selectedCells = [];
         this.updateActiveIndicates(this.focusX, this.focusY - 1);
+        this.y1 = this.y2 = this.focusY;
         this.updateActiveCell();
     }
 
@@ -164,26 +176,55 @@ class CellSelector {
         clearSelectedCellsBackground(this.selectedCells);
         this.selectedCells = [];
         this.updateActiveIndicates(this.focusX - 1, this.focusY);
+        this.x1 = this.x2 = this.focusX;
         this.updateActiveCell();
     }
 
-    tab() {
+    tab(event) {
+        event.preventDefault();
         if (this.selectedCells.length === 1) {
             clearSelectedCellsBackground(this.selectedCells);
             this.selectedCells = [];
             this.updateActiveIndicates(this.focusX + 1, this.focusY);
+            this.selectedCells = [findCell(this.focusX, this.focusY)];
+            this.x1 = this.x2 = this.focusX;
         } else {
             if (this.focusX < this.x2) {
                 this.updateActiveIndicates(this.focusX + 1, this.focusY);
             } else if (this.focusY < this.y2) {
                 this.updateActiveIndicates(this.x1, this.focusY + 1);
+            } else {
+                this.updateActiveIndicates(this.x1, this.y1);
             }
         }
-        setTimeout(()=>this.updateActiveCell(), 0);
+        this.updateActiveCell();
+    }
+
+    enter(event) {
+        if (event.altKey) {
+            return;
+        }
+        event.preventDefault();
+        if (this.selectedCells.length === 1) {
+            clearSelectedCellsBackground(this.selectedCells);
+            this.selectedCells = [];
+            this.updateActiveIndicates(this.focusX, this.focusY + 1);
+            this.selectedCells = [findCell(this.focusX, this.focusY)];
+            this.y1 = this.y2 = this.focusY;
+        } else {
+            if (this.focusY < this.y2) {
+                this.updateActiveIndicates(this.focusX, this.focusY + 1);
+            } else if (this.focusX < this.x2) {
+                this.updateActiveIndicates(this.focusX + 1, this.y1);
+            } else {
+                this.updateActiveIndicates(this.x1, this.y1);
+            }
+        }
+        this.updateActiveCell();
     }
 
     updateActiveIndicates(x, y) {
-        if (x >= 0 && y >= 1 && findCell(x, y).$el) {
+        if (x >= 1 && y >= 1 && findCell(x, y).$el) {
             this.focusX = x;
             this.focusY = y;
         }

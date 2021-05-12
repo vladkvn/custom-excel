@@ -53,13 +53,13 @@ export function createTable(rowsCount= 20, columnsCount = alphabetSize - 1) {
     const headerCols = new Array(columnsCount + 1)
         .fill('')
         .map(toHeaderValue)
-        .map(toColumnHeaderCell)
+        .map((value, index)=> toColumnHeaderCell(value, index + 1))
         .join('');
     rows.push(createFirstRow(headerCols));
     for (let i = 0; i < rowsCount; i++) {
         const rowCells = new Array(columnsCount + 1)
             .fill('')
-            .map((_, index)=>toCell(_, i+1, index))
+            .map((_, index)=>toCell(_, i+1, index + 1))
             .join('');
         rows.push(createRow(rowCells, i+1));
     }
