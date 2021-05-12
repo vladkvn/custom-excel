@@ -3,6 +3,8 @@ import {$} from '../../core/dom';
 const PRESELECTED = 'preselected';
 const SELECTED = 'selected';
 const FOCUS = 'focus';
+const MIN_X = 1;
+const MIN_Y = 1;
 
 export class SelectorManager {
     constructor(table) {
@@ -10,10 +12,6 @@ export class SelectorManager {
         this.$root = table.$root;
         this.prevX = undefined;
         this.prevY = undefined;
-    }
-
-    validateEvent(event) {
-        event.target.dataset.colIndex;
     }
 
     onMousedown(event) {
@@ -149,53 +147,33 @@ class CellSelector {
     }
 
     arrowRight() {
-        clearSelectedCellsBackground(this.selectedCells);
-        this.selectedCells = [];
-        this.updateActiveIndicates(this.focusX + 1, this.focusY);
-        this.x1 = this.x2 = this.focusX;
-        this.updateActiveCell();
+        this.moveAndMakeActive(this.focusX + 1, this.focusY);
     }
 
     arrowDown() {
-        clearSelectedCellsBackground(this.selectedCells);
-        this.selectedCells = [];
-        this.updateActiveIndicates(this.focusX, this.focusY + 1);
-        this.y1 = this.y2 = this.focusY;
-        this.updateActiveCell();
+        this.moveAndMakeActive(this.focusX, this.focusY + 1);
     }
 
     arrowUp() {
-        clearSelectedCellsBackground(this.selectedCells);
-        this.selectedCells = [];
-        this.updateActiveIndicates(this.focusX, this.focusY - 1);
-        this.y1 = this.y2 = this.focusY;
-        this.updateActiveCell();
+        this.moveAndMakeActive(this.focusX, this.focusY - 1);
     }
 
     arrowLeft() {
-        clearSelectedCellsBackground(this.selectedCells);
-        this.selectedCells = [];
-        this.updateActiveIndicates(this.focusX - 1, this.focusY);
-        this.x1 = this.x2 = this.focusX;
-        this.updateActiveCell();
+        this.moveAndMakeActive(this.focusX - 1, this.focusY);
     }
 
     tab(event) {
         event.preventDefault();
         if (this.selectedCells.length === 1) {
-            clearSelectedCellsBackground(this.selectedCells);
-            this.selectedCells = [];
+            this.moveAndMakeActive(this.focusX + 1, this.focusY);
+            return;
+        }
+        if (!this.lastColInSelection()) {
             this.updateActiveIndicates(this.focusX + 1, this.focusY);
-            this.selectedCells = [findCell(this.focusX, this.focusY)];
-            this.x1 = this.x2 = this.focusX;
+        } else if (!this.lastRowInSelection()) {
+            this.updateActiveIndicates(this.x1, this.focusY + 1);
         } else {
-            if (this.focusX < this.x2) {
-                this.updateActiveIndicates(this.focusX + 1, this.focusY);
-            } else if (this.focusY < this.y2) {
-                this.updateActiveIndicates(this.x1, this.focusY + 1);
-            } else {
-                this.updateActiveIndicates(this.x1, this.y1);
-            }
+            this.updateActiveIndicates(this.x1, this.y1);
         }
         this.updateActiveCell();
     }
@@ -206,28 +184,42 @@ class CellSelector {
         }
         event.preventDefault();
         if (this.selectedCells.length === 1) {
-            clearSelectedCellsBackground(this.selectedCells);
-            this.selectedCells = [];
+            this.moveAndMakeActive(this.focusX, this.focusY + 1);
+            return;
+        }
+        if (!this.lastRowInSelection()) {
             this.updateActiveIndicates(this.focusX, this.focusY + 1);
-            this.selectedCells = [findCell(this.focusX, this.focusY)];
-            this.y1 = this.y2 = this.focusY;
+        } else if (!this.lastColInSelection()) {
+            this.updateActiveIndicates(this.focusX + 1, this.y1);
         } else {
-            if (this.focusY < this.y2) {
-                this.updateActiveIndicates(this.focusX, this.focusY + 1);
-            } else if (this.focusX < this.x2) {
-                this.updateActiveIndicates(this.focusX + 1, this.y1);
-            } else {
-                this.updateActiveIndicates(this.x1, this.y1);
-            }
+            this.updateActiveIndicates(this.x1, this.y1);
         }
         this.updateActiveCell();
     }
 
+    moveAndMakeActive(x, y) {
+        clearSelectedCellsBackground(this.selectedCells);
+        this.selectedCells = [];
+        this.updateActiveIndicates(x, y);
+        this.selectedCells = [findCell(this.focusX, this.focusY)];
+        this.x1 = this.x2 = this.focusX;
+        this.y1 = this.y2 = this.focusY;
+        this.updateActiveCell();
+    }
+
     updateActiveIndicates(x, y) {
-        if (x >= 1 && y >= 1 && findCell(x, y).$el) {
+        if (x >= MIN_X && y >= MIN_Y && findCell(x, y).$el) {
             this.focusX = x;
             this.focusY = y;
         }
+    }
+
+    lastColInSelection() {
+        return this.focusX === this.x2;
+    }
+
+    lastRowInSelection() {
+        return this.focusY === this.y2;
     }
 }
 
