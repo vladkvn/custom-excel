@@ -2,7 +2,7 @@ import {$} from '../../core/dom';
 
 const PRESELECTED = 'preselected';
 const SELECTED = 'selected';
-const ACTIVE = 'active';
+const FOCUS = 'focus';
 
 export class SelectorManager {
     constructor(table) {
@@ -130,12 +130,12 @@ class CellSelector {
     }
 
     updateActiveCell() {
-        let activeCell = $('.' + ACTIVE);
+        let activeCell = $('.' + FOCUS);
         if (activeCell.$el) {
-            activeCell.removeClass(ACTIVE);
+            activeCell.removeClass(FOCUS);
         }
         activeCell = findCell(this.focusX, this.focusY);
-        activeCell.addClass(ACTIVE);
+        activeCell.addClass(FOCUS);
         activeCell.$el.focus();
     }
 
