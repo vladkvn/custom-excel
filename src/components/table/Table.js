@@ -3,9 +3,10 @@ import {createTable} from './helper/table.template';
 import {resize} from './resize/TableResizer';
 import {selectCells} from './cellSelector/CellSelector';
 import {targetCellDetails} from './helper/table-helper';
-import {EventBus} from '../../core/EventBus';
+import {EventBus} from '../../core/events/EventBus';
 import {SelectedCellsManager} from './cellSelector/SelectedCellsManager';
 import {ActiveCellManager} from './cellSelector/ActiveCellManager';
+import {TableInputManager} from './input/TableInputManager';
 
 
 export class Table extends ExcelComponent {
@@ -14,14 +15,20 @@ export class Table extends ExcelComponent {
   constructor($root) {
       super($root, {
           name: 'Table',
-          listeners: ['mousedown', 'keydown']
+          listeners: ['mousedown']
       });
-      this.onKeydownListeners = [];
       this.eventBus = new EventBus();
       this.selectedCellsManager = new SelectedCellsManager(this.eventBus);
       this.activeCellManager = new ActiveCellManager(this);
+      this.inputManager = new TableInputManager(this);
+      this.domListenerComponents = [this.activeCellManager, this.inputManager];
   }
 
+
+  init() {
+      super.init();
+      this.domListenerComponents.forEach((component)=>component.initDomListeners());
+  }
 
   destroy() {
       super.destroy();
@@ -41,15 +48,7 @@ export class Table extends ExcelComponent {
 
       const targetCellInfo = targetCellDetails(event);
       if (targetCellInfo) {
-          selectCells(this, targetCellInfo)
-              .then((result)=>{
-                  console.log('cellsSelectionFinished');
-                  this.eventBus.publish('cellsSelectionFinished', result);
-              });
+          selectCells(this, targetCellInfo);
       }
-  }
-
-  onKeydown(event) {
-      this.onKeydownListeners.forEach((listener) => listener.onKeydown(event));
   }
 }

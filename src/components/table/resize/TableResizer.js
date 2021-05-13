@@ -1,6 +1,7 @@
 import {$} from '../../../core/dom';
 import {DomListener} from '../../../core/DomListener';
-import {ResizeResult} from './ResizeResult';
+import {ResizeResult} from '../../../core/events/ResizeResult';
+import {EVENT_TYPES} from '../../../core/events/EventTypes';
 
 
 export function resize(table, event) {
@@ -8,7 +9,7 @@ export function resize(table, event) {
     const promise = new Promise((resolve)=>{
         new Resizer(table, event, resolve);
     });
-    promise.then((result)=> table.eventBus.publish('resize', result));
+    promise.then((result)=> table.eventBus.publish(EVENT_TYPES.RESIZE, result));
     return promise;
 }
 

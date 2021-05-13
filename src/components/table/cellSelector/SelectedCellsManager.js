@@ -1,13 +1,14 @@
 import {clearCellsView, updateCellsView} from '../helper/table-helper';
+import {EVENT_TYPES} from '../../../core/events/EventTypes';
 
 const SELECTED = 'selected';
 
 export class SelectedCellsManager {
     constructor(eventBus) {
         this.selectedCells = [];
-        eventBus.subscribe('cellsSelectionStarted', this);
-        eventBus.subscribe('cellsSelectionFinished', this);
-        eventBus.subscribe('cellsSelectionChanged', this);
+        eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, this);
+        eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
+        eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_CHANGED, this);
     }
 
     listen(selectionChangedEvent) {

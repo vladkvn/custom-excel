@@ -1,9 +1,10 @@
 import {DomListener} from '../../../core/DomListener';
 import {clearCellsView, findCell, targetCellDetails, updateCellsView} from '../helper/table-helper';
-import {SelectingResult} from './SelectingResult';
+import {SelectingResult} from '../../../core/events/SelectingResult';
+import {EVENT_TYPES} from '../../../core/events/EventTypes';
 
 const PRESELECTED = 'preselected';
-// eslint-disable-next-line no-unused-vars
+
 class AdvancedCellSelector extends DomListener {
     constructor($root, resolve, initialEventDetails) {
         super($root, ['mouseup', 'mousemove']);
@@ -58,6 +59,7 @@ class AdvancedCellSelector extends DomListener {
 
 
 export function selectCells($table, targetCellInfo) {
+    $table.eventBus.publish(EVENT_TYPES.CELLS_SELECTION_STARTED);
     // eslint-disable-next-line no-undef
     const promise = new Promise((resolve)=>{
         new AdvancedCellSelector($table.$root, resolve, targetCellInfo);
@@ -65,6 +67,8 @@ export function selectCells($table, targetCellInfo) {
     promise.then((res) => {
         clearCellsView(res.cells, PRESELECTED);
     });
-    $table.eventBus.publish('cellsSelectionStarted');
+    promise.then((res) => {
+        $table.eventBus.publish(EVENT_TYPES.CELLS_SELECTION_FINISHED, res);
+    });
     return promise;
 }
