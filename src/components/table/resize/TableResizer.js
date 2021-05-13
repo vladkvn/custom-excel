@@ -3,6 +3,8 @@ import {DomListener} from '../../../core/DomListener';
 import {ResizeResult} from '../../../core/events/ResizeResult';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 
+export const TYPE_COLUMN = 'col';
+export const TYPE_ROW = 'row';
 
 export function resize(table, event) {
     // eslint-disable-next-line no-undef
@@ -37,7 +39,7 @@ export class Resizer extends DomListener {
         this.resize();
         this.remove();
         this.removeDomListeners();
-        this.resolve(new ResizeResult(this.type, this.newValue));
+        this.resolve(new ResizeResult(this.type, this.newValue, this.x, this.y));
     }
 
     onMousemove(event) {
@@ -48,20 +50,20 @@ export class Resizer extends DomListener {
         this.x = x;
         this.y = y;
         switch (this.type) {
-        case 'col':
+        case TYPE_COLUMN:
             this.$el.css({left: `${x}px`});
             break;
-        case 'row':
+        case TYPE_ROW:
             this.$el.css({top: `${y}px`});
         }
     }
 
     resize() {
         switch (this.type) {
-        case 'col':
+        case TYPE_COLUMN:
             this.resizeColumn();
             break;
-        case 'row':
+        case TYPE_ROW:
             this.resizeRow();
         }
     }

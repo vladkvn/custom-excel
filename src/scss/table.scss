@@ -63,16 +63,17 @@
     border-left: none;
     padding: 7px 5px 0;
     outline: none;
+    color: black;
+    overflow: hidden;
     &.preselected {
       background-color: #E2F0FF;
     }
 
     &.selected {
-      background-color: $default-active-color;
+      background-color: #bfdef9;
     }
 
     &.focus {
-      background-color: #bfdef9;
       border:none;
       outline: 2px solid #5087ff;
       z-index: 2;

@@ -4,23 +4,30 @@ import {EVENT_TYPES} from '../../../core/events/EventTypes';
 const SELECTED = 'selected';
 
 export class SelectedCellsManager {
-    constructor(eventBus) {
+    constructor(table) {
         this.selectedCells = [];
-        eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, this);
-        eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
-        eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_CHANGED, this);
+        table.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, this);
+        table.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
+        table.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, this);
     }
 
     listen(selectionChangedEvent) {
-        this.clear();
         switch (selectionChangedEvent.name) {
-        case 'cellsSelectionStarted':
+        case EVENT_TYPES.CELLS_SELECTION_STARTED:
+            this.clear();
             this.selectedCells = [];
             break;
-        case 'cellsSelectionFinished':
-        case 'cellsSelectionChanged':
+        case EVENT_TYPES.CELLS_SELECTION_FINISHED:
+            this.clear();
             this.selectedCells = selectionChangedEvent.data.cells;
             this.redraw();
+            break;
+        case EVENT_TYPES.ACTIVE_CELL_MOVED:
+            if (selectionChangedEvent.data.updateSelectedCells) {
+                this.clear();
+                this.selectedCells = [selectionChangedEvent.data.activeCell];
+                this.redraw();
+            }
             break;
         }
     }

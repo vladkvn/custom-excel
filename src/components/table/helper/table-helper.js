@@ -31,4 +31,8 @@ export class CellInfo {
     }
 }
 
+export function columnIdentifier(x, y) {
+    return `[${x}|${y}]`;
+}
+
 

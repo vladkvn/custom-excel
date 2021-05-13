@@ -1,12 +1,14 @@
+import {Event} from './Event.js';
+
 export class EventBus {
     constructor() {
         this.listeners = {};
     }
 
-    publish(eventName, eventData) {
+    publish(eventName, eventData, producer) {
         const eventListeners = this.listeners[eventName];
         if (eventListeners) {
-            eventListeners.forEach((listener) => {
+            eventListeners.filter((listener)=> listener!==producer).forEach((listener) => {
                 listener.listen(new Event(eventName, eventData));
             });
         }
@@ -20,12 +22,5 @@ export class EventBus {
             this.listeners[eventName] = [listener];
         }
         console.log(`listener added: {name:${eventName}, listener:`, listener);
-    }
-}
-
-class Event {
-    constructor(name, data) {
-        this.name = name;
-        this.data = data;
     }
 }

@@ -1,8 +1,8 @@
 import {$} from '../../../core/dom';
 import {findCell} from '../helper/table-helper';
 import {DomListener} from '../../../core/DomListener';
-import {SelectingResult} from '../../../core/events/SelectingResult';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
+import {ActiveCellMoved} from '../../../core/events/ActiveCellMoved';
 
 const FOCUS = 'focus';
 const MIN_X = 1;
@@ -14,25 +14,27 @@ export class ActiveCellManager extends DomListener {
         this.eventBus = table.eventBus;
         this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, this);
         this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
-        this.focusX;
-        this.focusY;
+        this.focusX = 1;
+        this.focusY = 1;
         this.x1;
         this.x2;
         this.y1;
         this.y2;
         this.singleSelection = true;
         this.activeElement;
+        this.publishActiveCellUpdated(true);
     }
+
 
     listen(selectionChangedEvent) {
         this.clear();
         switch (selectionChangedEvent.name) {
-        case 'cellsSelectionFinished':
+        case EVENT_TYPES.CELLS_SELECTION_FINISHED:
             this.x1 = this.focusX = selectionChangedEvent.data.x1;
             this.x2 = selectionChangedEvent.data.x2;
             this.y1 = this.focusY = selectionChangedEvent.data.y1;
             this.y2 = selectionChangedEvent.data.y2;
-            this.singleSelection = !selectionChangedEvent.data.cells.length;
+            this.singleSelection = selectionChangedEvent.data.cells.length === 1;
             this.updateActiveCell();
             break;
         }
@@ -42,21 +44,27 @@ export class ActiveCellManager extends DomListener {
         switch (event.key) {
         case 'ArrowDown':
             this.moveAndMakeActive(this.focusX, this.focusY + 1);
+            this.publishActiveCellUpdated(true);
             break;
         case 'ArrowUp':
             this.moveAndMakeActive(this.focusX, this.focusY - 1);
+            this.publishActiveCellUpdated(true);
             break;
         case 'ArrowLeft':
             this.moveAndMakeActive(this.focusX - 1, this.focusY);
+            this.publishActiveCellUpdated(true);
             break;
         case 'ArrowRight':
             this.moveAndMakeActive(this.focusX + 1, this.focusY);
+            this.publishActiveCellUpdated(true);
             break;
         case 'Tab':
             this.tab(event);
+            this.publishActiveCellUpdated(this.singleSelection);
             break;
         case 'Enter':
             this.enter(event);
+            this.publishActiveCellUpdated(this.singleSelection);
             break;
         }
     }
@@ -138,12 +146,6 @@ export class ActiveCellManager extends DomListener {
         if (x >= MIN_X && y >= MIN_Y && findCell(x, y).$el) {
             this.focusX = x;
             this.focusY = y;
-            if (this.singleSelection) {
-                const activeCell = findCell(this.focusX, this.focusY);
-                console.log('single cell moved!');
-                this.eventBus.publish(EVENT_TYPES.CELLS_SELECTION_CHANGED,
-                    new SelectingResult([activeCell], this.focusX, this.focusX, this.focusY, this.focusY));
-            }
         }
     }
 
@@ -191,5 +193,10 @@ export class ActiveCellManager extends DomListener {
             this.updateActiveIndicates(this.x1, this.y1);
         }
         this.updateActiveCell();
+    }
+
+    publishActiveCellUpdated(updateSelectedCells = false) {
+        const activeCell = findCell(this.focusX, this.focusY);
+        this.eventBus.publish(EVENT_TYPES.ACTIVE_CELL_MOVED, new ActiveCellMoved(activeCell, updateSelectedCells));
     }
 }

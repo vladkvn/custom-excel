@@ -17,6 +17,7 @@ class AdvancedCellSelector extends DomListener {
         this.x2 = initialEventDetails.x;
         this.y1 = initialEventDetails.y;
         this.y2 = initialEventDetails.y;
+        this.updatePreselectedCells();
     }
 
     onMouseup() {
