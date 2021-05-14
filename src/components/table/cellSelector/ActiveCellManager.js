@@ -27,17 +27,15 @@ export class ActiveCellManager extends DomListener {
 
 
     listen(selectionChangedEvent) {
+        this.clear();
         switch (selectionChangedEvent.name) {
         case EVENT_TYPES.CELLS_SELECTION_FINISHED:
-            if (selectionChangedEvent.data.updateActiveNeeded) {
-                this.clear();
-                this.x1 = this.focusX = selectionChangedEvent.data.x1;
-                this.x2 = selectionChangedEvent.data.x2;
-                this.y1 = this.focusY = selectionChangedEvent.data.y1;
-                this.y2 = selectionChangedEvent.data.y2;
-                this.singleSelection = selectionChangedEvent.data.cells.length === 1;
-                this.updateActiveCell();
-            }
+            this.x1 = this.focusX = selectionChangedEvent.data.x1;
+            this.x2 = selectionChangedEvent.data.x2;
+            this.y1 = this.focusY = selectionChangedEvent.data.y1;
+            this.y2 = selectionChangedEvent.data.y2;
+            this.singleSelection = selectionChangedEvent.data.cells.length === 1;
+            this.updateActiveCell();
             break;
         }
     }

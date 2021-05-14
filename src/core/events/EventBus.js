@@ -8,7 +8,7 @@ export class EventBus {
     publish(eventName, eventData, producer) {
         const eventListeners = this.listeners[eventName];
         if (eventListeners) {
-            eventListeners.filter((listener) => listener!==producer).forEach((listener) => {
+            eventListeners.filter((listener)=> listener!==producer).forEach((listener) => {
                 listener.listen(new Event(eventName, eventData));
             });
         }
@@ -22,13 +22,5 @@ export class EventBus {
             this.listeners[eventName] = [listener];
         }
         console.log(`listener added: {name:${eventName}, listener:`, listener);
-    }
-
-    unsubscribe(listener) {
-        for (const eventName in this.listeners) {
-            if (this.listeners[eventName].includes(listener)) {
-                this.listeners[eventName] = this.listeners[eventName].remove(listener);
-            }
-        }
     }
 }

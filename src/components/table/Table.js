@@ -1,7 +1,7 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {createTable} from './helper/table.template';
 import {resize} from './resize/TableResizer';
-import {selectCells, SELECTOR_MODE_KEYS, SELECTOR_MODE_MOUSE} from './cellSelector/CellSelector';
+import {selectCells} from './cellSelector/CellSelector';
 import {targetCellDetails} from './helper/table-helper';
 import {SelectedCellsManager} from './cellSelector/SelectedCellsManager';
 import {ActiveCellManager} from './cellSelector/ActiveCellManager';
@@ -14,7 +14,7 @@ export class Table extends ExcelComponent {
   constructor($root, eventBus) {
       super($root, {
           name: 'Table',
-          listeners: ['mousedown', 'keydown'],
+          listeners: ['mousedown'],
           eventBus: eventBus
       });
       this.selectedCellsManager;
@@ -53,14 +53,7 @@ export class Table extends ExcelComponent {
 
       const targetCellInfo = targetCellDetails(event);
       if (targetCellInfo) {
-          selectCells(this, targetCellInfo, SELECTOR_MODE_MOUSE);
-      }
-  }
-
-  onKeydown(event) {
-      if (event.key === 'Shift') {
-          const targetCellInfo = targetCellDetails(event);
-          selectCells(this, targetCellInfo, SELECTOR_MODE_KEYS);
+          selectCells(this, targetCellInfo);
       }
   }
 }
