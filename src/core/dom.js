@@ -67,7 +67,7 @@ class Dom {
             mapResult.value = style[key];
             return mapResult;
         });
-        styleList.forEach((style)=> this.$el.style = `${style.key}: ${style.value}`);
+        styleList.forEach((style)=> this.$el.style[style.key] = style.value);
         return this;
     }
 }

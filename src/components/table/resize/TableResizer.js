@@ -1,7 +1,7 @@
 import {$} from '../../../core/dom';
 import {DomListener} from '../../../core/DomListener';
-import {ResizeResult} from '../../../core/events/ResizeResult';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
+import {CellStyleUpdatedEvent} from '../../../core/events/CellStyleUpdatedEvent';
 
 export const TYPE_COLUMN = 'col';
 export const TYPE_ROW = 'row';
@@ -11,7 +11,11 @@ export function resize(table, event) {
     const promise = new Promise((resolve)=>{
         new Resizer(table, event, resolve);
     });
-    promise.then((result)=> table.eventBus.publish(EVENT_TYPES.RESIZE, result));
+    promise.then((cells)=> {
+        cells.forEach((cell)=>{
+            table.eventBus.publish(EVENT_TYPES.CELL_STYLE_UPDATED, new CellStyleUpdatedEvent(cell));
+        });
+    });
     return promise;
 }
 
@@ -20,26 +24,25 @@ export class Resizer extends DomListener {
         const type = event.target.dataset.resize;
         super(table.$root, ['mouseup', 'mousemove']);
         this.$el = $.create('div', `resizer-${type}`);
-        this.$parent = table.$root;
         this.type = type;
         this.move(event.pageX, event.pageY);
-        this.$parent.append(this.$el);
+        this.$root.append(this.$el);
         this.startX = event.pageX;
         this.startY = event.pageY;
         this.x = event.pageX;
         this.y = event.pageY;
         this.target = event.target;
-        this.$root = table.$root;
         this.resolve = resolve;
         this.initDomListeners();
         this.newValue = 0;
+        this.targetCells = [];
     }
 
     onMouseup() {
         this.resize();
         this.remove();
         this.removeDomListeners();
-        this.resolve(new ResizeResult(this.type, this.newValue, this.x, this.y));
+        this.resolve(this.targetCells);
     }
 
     onMousemove(event) {
@@ -72,10 +75,8 @@ export class Resizer extends DomListener {
         const initialWidth = this.target.parentElement.offsetWidth;
         this.newValue = initialWidth + (this.x - this.startX);
         const colIndex = this.target.dataset.targetColIndex;
-        const targetCells = $.all(`div[data-cell-x$="${colIndex}"]`);
-        targetCells.forEach((cell)=>
-            cell.css({width: `${this.newValue}px`})
-        );
+        this.targetCells = $.all(`div[data-cell-x$="${colIndex}"]`);
+        this.targetCells.forEach((cell)=> cell.css({width: `${this.newValue}px`}));
     }
 
     resizeRow() {
@@ -87,6 +88,6 @@ export class Resizer extends DomListener {
     }
 
     remove() {
-        this.$parent.removeChild(this.$el);
+        this.$root.removeChild(this.$el);
     }
 }

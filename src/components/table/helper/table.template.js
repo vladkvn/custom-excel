@@ -16,7 +16,7 @@ function createCell(content, className = 'cell', rowIndex, colIndex) {
 
 function toColumnHeaderCell(content, index) {
     return `
-    <div class="column" data-cell-x=${index}>
+    <div class="column" data-cell-x=${index} data-cell-y="0">
         ${content || ''}
         <div class="col-resize" data-resize="col" data-target-col-index=${index}>
         </div>
@@ -26,7 +26,7 @@ function toColumnHeaderCell(content, index) {
 function createRow(content, index) {
     return `
         <div class="row" data-row-index=${index}>
-            <div class="row-info" data-row-y=${index}>
+            <div class="row-info" data-row-y=${index} data-cell-x="0" data-cell-y="${index}">
                 ${index}
                 <div class="row-resize" data-resize="row" data-target-row-index=${index}></div>
             </div>

@@ -1,16 +1,13 @@
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
-import {columnIdentifier} from '../../table/helper/table-helper';
-import {TYPE_COLUMN, TYPE_ROW} from '../../table/resize/TableResizer';
+import {columnIdentifier, findCell} from '../../table/helper/table-helper';
 
 export class ExcelState {
     constructor(table) {
-        this.values = [];
-        this.rowsHeight = {};
-        this.colsWidth = {};
-        this.values = {};
+        this.cellStates = {};
         const eventBus = table.eventBus;
-        eventBus.subscribe(EVENT_TYPES.RESIZE, this);
+        eventBus.subscribe(EVENT_TYPES.CELL_STYLE_UPDATED, this);
         eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, this);
+        window['stateSaver'] = this;
     }
 
     listen(event) {
@@ -18,26 +15,37 @@ export class ExcelState {
         case EVENT_TYPES.CELL_INPUT_UPDATED:
             this.saveCellValue(event);
             break;
-        case EVENT_TYPES.RESIZE:
-            this.saveResizeValue(event);
+        case EVENT_TYPES.CELL_STYLE_UPDATED:
+            this.saveCellStyle(event);
             break;
         }
     }
 
     saveCellValue(event) {
-        const targetIdentifier = columnIdentifier(event.data.x, event.data.y);
-        this.values[targetIdentifier] = event.data;
-        console.log(this.values);
+        this.cellEntry(event.data.x, event.data.y).value = event.data.value;
     }
 
-    saveResizeValue(event) {
-        switch (event.data.type) {
-        case TYPE_COLUMN:
-            this.colsWidth[event.data.x] = event.data.newValue;
-            break;
-        case TYPE_ROW:
-            this.rowsHeight[event.data.y] = event.data.newValue;
-            break;
+    saveCellStyle(event) {
+        this.cellEntry(event.data.x, event.data.y).style = event.data.style;
+    }
+
+    cellEntry(x, y) {
+        const targetIdentifier = columnIdentifier(x, y);
+        if (!this.cellStates[targetIdentifier]) {
+            this.cellStates[targetIdentifier] = {x: x, y: y};
         }
+        return this.cellStates[targetIdentifier];
+    }
+
+    renderState() {
+        Object.values(this.cellStates).forEach((cellState) => {
+            const $cell = findCell(cellState.x, cellState.y);
+            if (cellState.style) {
+                $cell.$el.style = cellState.style;
+            }
+            if (cellState.value) {
+                $cell.$el.textContent = cellState.value;
+            }
+        });
     }
 }

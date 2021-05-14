@@ -2,7 +2,7 @@ import {$} from '../../../core/dom';
 
 export function targetCellDetails(event) {
     const target = event.target;
-    if (target.dataset.cellX && target.dataset.cellY) {
+    if (target.dataset.cellX && target.dataset.cellY && target.getAttribute('contenteditable')) {
         return new CellInfo(target);
     }
 }
