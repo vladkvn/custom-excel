@@ -1,14 +1,28 @@
 import {clearCellsView, updateCellsView} from '../helper/table-helper';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
+import {ExcelComponent} from '../../../core/ExcelComponent';
 
 const SELECTED = 'selected';
 
-export class SelectedCellsManager {
+export class SelectedCellsManager extends ExcelComponent {
     constructor(table) {
+        super(table.$root, {
+            name: 'activeCellManager',
+            eventBus: table.eventBus,
+            store: table.store,
+            listeners: []
+        });
         this.selectedCells = [];
-        table.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, this);
-        table.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
-        table.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, this);
+        this.unsubscribers = [];
+    }
+
+    init() {
+        super.init();
+        this.unsubscribers.push(
+            this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, (event)=>this.listen(event)),
+            this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)),
+            this.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, (event)=>this.listen(event))
+        );
     }
 
     listen(selectionChangedEvent) {

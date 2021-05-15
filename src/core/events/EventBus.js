@@ -5,22 +5,26 @@ export class EventBus {
         this.listeners = {};
     }
 
-    publish(eventName, eventData, producer) {
+    publish(eventName, eventData) {
         const eventListeners = this.listeners[eventName];
         if (eventListeners) {
-            eventListeners.filter((listener)=> listener!==producer).forEach((listener) => {
-                listener.listen(new Event(eventName, eventData));
+            eventListeners.forEach((listener) => {
+                listener(new Event(eventName, eventData));
             });
         }
     }
 
     subscribe(eventName, listener) {
-        const eventListeners = this.listeners[eventName];
-        if (eventListeners) {
-            !eventListeners.includes(listener) ? eventListeners.push(listener) : undefined;
+        let eventListeners = this.listeners[eventName];
+        if (eventListeners && !eventListeners.includes(listener)) {
+            eventListeners.push(listener);
         } else {
-            this.listeners[eventName] = [listener];
+            eventListeners = this.listeners[eventName] = [listener];
         }
-        console.log(`listener added: {name:${eventName}, listener:`, listener);
+        return {
+            unsubscribe() {
+                eventListeners = eventListeners.filter((l) => l !== listener);
+            }
+        };
     }
 }

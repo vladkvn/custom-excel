@@ -1,13 +1,13 @@
-import {EVENT_TYPES} from '../../../core/events/EventTypes';
-import {columnIdentifier, findCell} from '../../table/helper/table-helper';
+import {EVENT_TYPES} from '../events/EventTypes';
+import {columnIdentifier, findCell} from '../../components/table/helper/table-helper';
 
 export class ExcelState {
     constructor(table) {
         this.cellStates = {};
         const eventBus = table.eventBus;
-        eventBus.subscribe(EVENT_TYPES.CELL_STYLE_UPDATED, this);
-        eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, this);
-        window['stateSaver'] = this;
+        this.unsubscribers = [
+            eventBus.subscribe(EVENT_TYPES.CELL_STYLE_UPDATED, (event)=>this.listen(event)),
+            eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, (event)=>this.listen(event))];
     }
 
     listen(event) {

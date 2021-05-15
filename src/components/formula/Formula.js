@@ -6,11 +6,11 @@ import {$} from '../../core/dom';
 export class Formula extends ExcelComponent {
   static className = 'excel__formula'
 
-  constructor($root, eventBus) {
+  constructor($root, options) {
       super($root, {
           name: 'Formula',
           listeners: ['input', 'keydown'],
-          eventBus: eventBus
+          ...options
       });
       this.formulaElement;
   }
@@ -18,9 +18,11 @@ export class Formula extends ExcelComponent {
   init() {
       super.init();
       this.formulaElement= $('[data-formula]').$el;
-      this.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, this);
-      this.eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, this);
-      this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
+      this.unsubscribers.push(
+          this.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, (event)=>this.listen(event)),
+          this.eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, (event)=>this.listen(event)),
+          this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)));
+      this.$subscribe((state)=>console.log(state));
   }
 
   toHTML() {

@@ -1,15 +1,19 @@
-import {DomListener} from '../../../core/DomListener';
 import {clearCellsView, findCell, targetCellDetails, updateCellsView} from '../helper/table-helper';
 import {SelectingResult} from '../../../core/events/SelectingResult';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
+import {ExcelComponent} from '../../../core/ExcelComponent';
 
 const PRESELECTED = 'preselected';
 
-class AdvancedCellSelector extends DomListener {
-    constructor($root, resolve, initialEventDetails) {
-        super($root, ['mouseup', 'mousemove']);
+class AdvancedCellSelector extends ExcelComponent {
+    constructor(table, resolve, initialEventDetails) {
+        super(table.$root, {
+            name: 'cellSelector',
+            eventBus: table.eventBus,
+            store: table.store,
+            listeners: ['mouseup', 'mousemove']
+        });
         this.resolve = resolve;
-        this.initDomListeners();
         this.preselectedCells = [];
         this.prevX = initialEventDetails.x;
         this.prevY = initialEventDetails.y;
@@ -17,7 +21,16 @@ class AdvancedCellSelector extends DomListener {
         this.x2 = initialEventDetails.x;
         this.y1 = initialEventDetails.y;
         this.y2 = initialEventDetails.y;
+    }
+
+    init() {
+        this.initDomListeners();
         this.updatePreselectedCells();
+    }
+
+    destroy() {
+        super.destroy();
+        this.clearPreselectedCellBackground();
     }
 
     onMouseup() {
@@ -61,12 +74,14 @@ class AdvancedCellSelector extends DomListener {
 
 export function selectCells($table, targetCellInfo) {
     $table.eventBus.publish(EVENT_TYPES.CELLS_SELECTION_STARTED);
+    let cellSelector;
     // eslint-disable-next-line no-undef
     const promise = new Promise((resolve)=>{
-        new AdvancedCellSelector($table.$root, resolve, targetCellInfo);
+        cellSelector = new AdvancedCellSelector($table, resolve, targetCellInfo);
+        cellSelector.init();
     });
     promise.then((res) => {
-        clearCellsView(res.cells, PRESELECTED);
+        cellSelector.destroy();
     });
     promise.then((res) => {
         $table.eventBus.publish(EVENT_TYPES.CELLS_SELECTION_FINISHED, res);

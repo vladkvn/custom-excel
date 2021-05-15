@@ -1,15 +1,19 @@
 import {$} from '../../../core/dom';
-import {DomListener} from '../../../core/DomListener';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {CellStyleUpdatedEvent} from '../../../core/events/CellStyleUpdatedEvent';
+import {ExcelComponent} from '../../../core/ExcelComponent';
 
 export const TYPE_COLUMN = 'col';
 export const TYPE_ROW = 'row';
 
 export function resize(table, event) {
+    let resizer;
     // eslint-disable-next-line no-undef
     const promise = new Promise((resolve)=>{
-        new Resizer(table, event, resolve);
+        resizer = new Resizer(table, event, resolve);
+    });
+    promise.then(()=>{
+        resizer.destroy();
     });
     promise.then((cells)=> {
         cells.forEach((cell)=>{
@@ -19,10 +23,15 @@ export function resize(table, event) {
     return promise;
 }
 
-export class Resizer extends DomListener {
+export class Resizer extends ExcelComponent {
     constructor(table, event, resolve) {
+        super(table.$root, {
+            name: 'resizer',
+            eventBus: table.eventBus,
+            store: table.store,
+            listeners: ['mouseup', 'mousemove']
+        });
         const type = event.target.dataset.resize;
-        super(table.$root, ['mouseup', 'mousemove']);
         this.$el = $.create('div', `resizer-${type}`);
         this.type = type;
         this.move(event.pageX, event.pageY);
@@ -33,7 +42,6 @@ export class Resizer extends DomListener {
         this.y = event.pageY;
         this.target = event.target;
         this.resolve = resolve;
-        this.initDomListeners();
         this.newValue = 0;
         this.targetCells = [];
     }

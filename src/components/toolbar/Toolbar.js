@@ -10,11 +10,11 @@ export class Toolbar extends ExcelComponent {
   static className = 'excel__toolbar'
 
 
-  constructor($root, eventBus) {
+  constructor($root, options) {
       super($root, {
           name: 'Toolbar',
           listeners: ['click'],
-          eventBus: eventBus
+          ...options
       });
       this.selectedCells = [];
   }
@@ -50,7 +50,9 @@ export class Toolbar extends ExcelComponent {
 
   init() {
       super.init();
-      this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
+      this.unsubscribers.push(
+          this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event))
+      );
   }
 
   onClick(event) {

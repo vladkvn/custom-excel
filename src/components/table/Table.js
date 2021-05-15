@@ -11,33 +11,28 @@ import {TableInputManager} from './input/TableInputManager';
 export class Table extends ExcelComponent {
   static className = 'excel__table'
 
-  constructor($root, eventBus) {
+  constructor($root, options) {
       super($root, {
           name: 'Table',
           listeners: ['mousedown'],
-          eventBus: eventBus
+          ...options
       });
-      this.selectedCellsManager;
-      this.activeCellManager;
-      this.inputManager;
-      this.domListenerComponents;
+      this.components = [
+          new SelectedCellsManager(this),
+          new TableInputManager(this),
+          new ActiveCellManager(this)];
   }
 
 
   init() {
       super.init();
-      this.selectedCellsManager = new SelectedCellsManager(this);
-      this.inputManager = new TableInputManager(this);
-      this.activeCellManager = new ActiveCellManager(this);
-      this.inputManager.initDomListeners();
-      this.activeCellManager.initDomListeners();
-      this.activeCellManager.updateActiveCell();
-      this.activeCellManager.publishActiveCellUpdated(true);
+      this.components.forEach((component)=> component.init());
+      this.$subscribe((state) => console.log(state));
   }
 
   destroy() {
       super.destroy();
-      this.activeCellManager.removeDomListeners();
+      this.components.forEach((component)=> component.destroy());
   }
 
   toHTML() {

@@ -1,19 +1,22 @@
 import {$} from '../../../core/dom';
 import {findCell} from '../helper/table-helper';
-import {DomListener} from '../../../core/DomListener';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ActiveCellMoved} from '../../../core/events/ActiveCellMoved';
+import {ExcelComponent} from '../../../core/ExcelComponent';
 
 const FOCUS = 'focus';
 const MIN_X = 1;
 const MIN_Y = 1;
 
-export class ActiveCellManager extends DomListener {
+export class ActiveCellManager extends ExcelComponent {
     constructor(table) {
-        super(table.$root, ['keydown']);
-        this.eventBus = table.eventBus;
-        this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, this);
-        this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, this);
+        super(table.$root, {
+            name: 'activeCellManager',
+            eventBus: table.eventBus,
+            store: table.store,
+            listeners: ['keydown']
+        });
+        this.unsubscribers = [];
         this.focusX = 1;
         this.focusY = 1;
         this.x1;
@@ -22,9 +25,16 @@ export class ActiveCellManager extends DomListener {
         this.y2;
         this.singleSelection = true;
         this.activeElement;
-        this.publishActiveCellUpdated(true);
     }
 
+    init() {
+        super.init();
+        this.unsubscribers.push(
+            this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, (event)=>this.listen(event)),
+            this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)));
+        this.updateActiveCell();
+        this.publishActiveCellUpdated(true);
+    }
 
     listen(selectionChangedEvent) {
         this.clear();
@@ -82,6 +92,7 @@ export class ActiveCellManager extends DomListener {
         const activeCell = findCell(this.focusX, this.focusY);
         activeCell.addClass(FOCUS);
         activeCell.$el.focus();
+        this.$dispatch({type: 'TEST'});
     }
 
     tab(event) {
