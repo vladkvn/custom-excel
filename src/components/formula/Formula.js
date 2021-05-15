@@ -22,7 +22,6 @@ export class Formula extends ExcelComponent {
           this.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, (event)=>this.listen(event)),
           this.eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, (event)=>this.listen(event)),
           this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)));
-      this.$subscribe((state)=>console.log(state));
   }
 
   toHTML() {

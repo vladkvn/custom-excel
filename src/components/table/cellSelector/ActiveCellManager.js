@@ -1,5 +1,5 @@
 import {$} from '../../../core/dom';
-import {findCell} from '../helper/table-helper';
+import {findCell} from '../helper/table.helper';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ActiveCellMoved} from '../../../core/events/ActiveCellMoved';
 import {ExcelComponent} from '../../../core/ExcelComponent';

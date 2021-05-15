@@ -1,7 +1,7 @@
 import {$} from '../../../core/dom';
-import {EVENT_TYPES} from '../../../core/events/EventTypes';
-import {CellStyleUpdatedEvent} from '../../../core/events/CellStyleUpdatedEvent';
 import {ExcelComponent} from '../../../core/ExcelComponent';
+import {columnResize, rowResize} from '../../../core/redux/action.creators';
+import {resizeColumn, resizeRow} from './resize.helper';
 
 export const TYPE_COLUMN = 'col';
 export const TYPE_ROW = 'row';
@@ -11,14 +11,10 @@ export function resize(table, event) {
     // eslint-disable-next-line no-undef
     const promise = new Promise((resolve)=>{
         resizer = new Resizer(table, event, resolve);
+        resizer.init();
     });
     promise.then(()=>{
         resizer.destroy();
-    });
-    promise.then((cells)=> {
-        cells.forEach((cell)=>{
-            table.eventBus.publish(EVENT_TYPES.CELL_STYLE_UPDATED, new CellStyleUpdatedEvent(cell));
-        });
     });
     return promise;
 }
@@ -31,9 +27,8 @@ export class Resizer extends ExcelComponent {
             store: table.store,
             listeners: ['mouseup', 'mousemove']
         });
-        const type = event.target.dataset.resize;
-        this.$el = $.create('div', `resizer-${type}`);
-        this.type = type;
+        this.type = event.target.dataset.resize;
+        this.$el = $.create('div', `resizer-${this.type}`);
         this.move(event.pageX, event.pageY);
         this.$root.append(this.$el);
         this.startX = event.pageX;
@@ -42,15 +37,20 @@ export class Resizer extends ExcelComponent {
         this.y = event.pageY;
         this.target = event.target;
         this.resolve = resolve;
-        this.newValue = 0;
-        this.targetCells = [];
+        this.targetIndex = this.type === TYPE_COLUMN ?
+            this.target.dataset.targetColIndex :
+            this.target.dataset.targetRowIndex;
     }
 
     onMouseup() {
         this.resize();
         this.remove();
         this.removeDomListeners();
-        this.resolve(this.targetCells);
+        this.resolve({
+            type: this.type,
+            value: this.newValue,
+            index: this.targetIndex
+        });
     }
 
     onMousemove(event) {
@@ -70,29 +70,28 @@ export class Resizer extends ExcelComponent {
     }
 
     resize() {
+        let newValue;
         switch (this.type) {
         case TYPE_COLUMN:
-            this.resizeColumn();
+            newValue = this.calcNewWidth();
+            resizeColumn(this.targetIndex, newValue);
+            this.$dispatch(columnResize({index: this.target.dataset.targetColIndex, value: newValue}));
             break;
         case TYPE_ROW:
-            this.resizeRow();
+            newValue = this.calcNewHeight();
+            resizeRow(this.targetIndex, newValue);
+            this.$dispatch(rowResize({index: this.target.dataset.targetRowIndex, value: newValue}));
         }
     }
 
-    resizeColumn() {
+    calcNewWidth() {
         const initialWidth = this.target.parentElement.offsetWidth;
-        this.newValue = initialWidth + (this.x - this.startX);
-        const colIndex = this.target.dataset.targetColIndex;
-        this.targetCells = $.all(`div[data-cell-x$="${colIndex}"]`);
-        this.targetCells.forEach((cell)=> cell.css({width: `${this.newValue}px`}));
+        return initialWidth + (this.x - this.startX);
     }
 
-    resizeRow() {
+    calcNewHeight() {
         const initialHeight = this.target.parentElement.offsetHeight;
-        this.newValue = initialHeight + (this.y - this.startY);
-        const rowIndex = this.target.dataset.targetRowIndex;
-        const targetRow = $(`div[data-row-index$="${rowIndex}"]`);
-        targetRow.css({height: `${this.newValue}px`});
+        return initialHeight + (this.y - this.startY);
     }
 
     remove() {

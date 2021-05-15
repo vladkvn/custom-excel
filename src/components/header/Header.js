@@ -14,7 +14,6 @@ export class Header extends ExcelComponent {
 
   init() {
       super.init();
-      this.$subscribe((state)=>console.log(state));
   }
 
   toHTML() {

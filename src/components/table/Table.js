@@ -2,10 +2,11 @@ import {ExcelComponent} from '../../core/ExcelComponent';
 import {createTable} from './helper/table.template';
 import {resize} from './resize/TableResizer';
 import {selectCells} from './cellSelector/CellSelector';
-import {targetCellDetails} from './helper/table-helper';
+import {targetCellDetails} from './helper/table.helper';
 import {SelectedCellsManager} from './cellSelector/SelectedCellsManager';
 import {ActiveCellManager} from './cellSelector/ActiveCellManager';
 import {TableInputManager} from './input/TableInputManager';
+import {resizeColumn, resizeRow} from './resize/resize.helper';
 
 
 export class Table extends ExcelComponent {
@@ -27,7 +28,18 @@ export class Table extends ExcelComponent {
   init() {
       super.init();
       this.components.forEach((component)=> component.init());
-      this.$subscribe((state) => console.log(state));
+      const colState = this.store.state.colState;
+      const rowState = this.store.state.rowState;
+      if (colState) {
+          Object.keys(colState).forEach((key)=>{
+              resizeColumn(key, colState[key]);
+          });
+      }
+      if (rowState) {
+          Object.keys(rowState).forEach((key) => {
+              resizeRow(key, rowState[key]);
+          });
+      }
   }
 
   destroy() {
