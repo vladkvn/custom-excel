@@ -5,7 +5,7 @@ import {selectCells} from './cellSelector/CellSelector';
 import {targetCellDetails} from './helper/table.helper';
 import {SelectedCellsManager} from './cellSelector/SelectedCellsManager';
 import {ActiveCellManager} from './cellSelector/ActiveCellManager';
-import {TableInputManager} from './input/TableInputManager';
+import {TableDataManager} from './data/TableDataManager';
 import {resizeColumn, resizeRow} from './resize/resize.helper';
 
 
@@ -20,7 +20,7 @@ export class Table extends ExcelComponent {
       });
       this.components = [
           new SelectedCellsManager(this),
-          new TableInputManager(this),
+          new TableDataManager(this),
           new ActiveCellManager(this)];
   }
 

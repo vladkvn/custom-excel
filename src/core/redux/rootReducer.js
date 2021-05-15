@@ -13,6 +13,14 @@ export function rootReducer(state, action) {
         const newState = {...prevState, [action.data.index]: action.data.value};
         return {...state, rowState: newState};
     }
+    case ACTION_TYPES.CELL_INPUT: {
+        prevState = state.cellsData || {};
+        const newState = {...prevState, [`${action.data.x}:${action.data.y}`]: action.data.value};
+        return {...state, cellsData: newState};
+    }
+    case ACTION_TYPES.ACTIVE_CELL_MOVED: {
+        return {...state, activeX: action.data.x, activeY: action.data.y};
+    }
     default:
         return state;
     }

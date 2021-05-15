@@ -3,6 +3,7 @@ import {findCell} from '../helper/table.helper';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ActiveCellMoved} from '../../../core/events/ActiveCellMoved';
 import {ExcelComponent} from '../../../core/ExcelComponent';
+import {activeCellMoved} from '../../../core/redux/action.creators';
 
 const FOCUS = 'focus';
 const MIN_X = 1;
@@ -17,8 +18,8 @@ export class ActiveCellManager extends ExcelComponent {
             listeners: ['keydown']
         });
         this.unsubscribers = [];
-        this.focusX = 1;
-        this.focusY = 1;
+        this.focusX;
+        this.focusY;
         this.x1;
         this.x2;
         this.y1;
@@ -32,8 +33,17 @@ export class ActiveCellManager extends ExcelComponent {
         this.unsubscribers.push(
             this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, (event)=>this.listen(event)),
             this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)));
-        this.updateActiveCell();
-        this.publishActiveCellUpdated(true);
+        this.renderState(this.store.state);
+        this.$subscribe((state)=>this.renderState(state));
+    }
+
+    renderState(state) {
+        this.focusX = state.activeX;
+        this.focusY = state.activeY;
+        if (this.focusX && this.focusY) {
+            this.updateActiveCell();
+            this.publishActiveCellUpdated(true);
+        }
     }
 
     listen(selectionChangedEvent) {
@@ -92,7 +102,7 @@ export class ActiveCellManager extends ExcelComponent {
         const activeCell = findCell(this.focusX, this.focusY);
         activeCell.addClass(FOCUS);
         activeCell.$el.focus();
-        this.$dispatch({type: 'TEST'});
+        this.$dispatch(activeCellMoved(activeCell));
     }
 
     tab(event) {

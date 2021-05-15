@@ -1,7 +1,6 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
-import {EVENT_TYPES} from '../../core/events/EventTypes';
-import {InputDataEvent} from '../../core/events/InputDataEvent';
 import {$} from '../../core/dom';
+import {cellInput} from '../../core/redux/action.creators';
 
 export class Formula extends ExcelComponent {
   static className = 'excel__formula'
@@ -13,15 +12,24 @@ export class Formula extends ExcelComponent {
           ...options
       });
       this.formulaElement;
+      this.targetCell;
   }
 
   init() {
       super.init();
       this.formulaElement= $('[data-formula]').$el;
-      this.unsubscribers.push(
-          this.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, (event)=>this.listen(event)),
-          this.eventBus.subscribe(EVENT_TYPES.CELL_INPUT_UPDATED, (event)=>this.listen(event)),
-          this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)));
+      this.renderState(this.store.state);
+      this.$subscribe((state)=>this.renderState(state));
+  }
+
+  renderState(state) {
+      // eslint-disable-next-line no-debugger
+      debugger;
+      const activeX = state.activeX;
+      const activeY = state.activeY;
+      if (activeX && activeY) {
+          this.formulaElement.textContent = state.cellsData[`${activeX}:${activeY}`];
+      }
   }
 
   toHTML() {
@@ -31,31 +39,16 @@ export class Formula extends ExcelComponent {
     `;
   }
 
-  listen(event) {
-      let newValue = '';
-      switch (event.name) {
-      case EVENT_TYPES.ACTIVE_CELL_MOVED:
-          this.targetCell = event.data.activeCell.$el;
-          newValue = this.targetCell.textContent;
-          break;
-      case EVENT_TYPES.CELL_INPUT_UPDATED:
-          newValue = event.data.value;
-          break;
-      case EVENT_TYPES.CELLS_SELECTION_FINISHED:
-          this.targetCell = event.data.cells[0].$el;
-          newValue = this.targetCell.textContent;
-          break;
-      }
-      this.formulaElement.textContent = newValue;
-  }
-
   onInput(event) {
-      this.eventBus.publish(EVENT_TYPES.CELL_INPUT_UPDATED, new InputDataEvent(this.targetCell), this);
-      this.targetCell.textContent = event.target.textContent;
+      if (this.targetCell) {
+          this.$dispatch(cellInput(this.targetCell));
+      } else {
+          event.preventDefault();
+      }
   }
 
   onKeydown(event) {
-      if (event.key === 'Enter') {
+      if (event.key === 'Enter' && this.targetCell) {
           event.preventDefault();
           this.targetCell.focus();
       }
