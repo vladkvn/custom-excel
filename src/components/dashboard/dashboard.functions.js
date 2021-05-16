@@ -14,7 +14,6 @@ function getAllKeys() {
 
 export function createRecordsTable() {
     const keys = getAllKeys();
-    console.log(keys);
     if (!keys.length) {
         return '' +
           '<p>Список записей пуск</p>';
