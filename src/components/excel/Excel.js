@@ -1,6 +1,7 @@
 import {$} from '../../core/dom/Dom';
 import {EventBus} from '../../core/events/EventBus';
 import {StoreSubscriber} from '../../core/redux/StoreSubscriber';
+import {tableOpened} from '../../core/redux/action.creators';
 
 export class Excel {
     constructor(options) {
@@ -29,6 +30,7 @@ export class Excel {
     init() {
         this.subscriber.subscribeComponents(this.components);
         this.components.forEach((component) => component.init());
+        this.store.dispatch(tableOpened({value: Date.now().toString()}));
     }
 
     destroy() {

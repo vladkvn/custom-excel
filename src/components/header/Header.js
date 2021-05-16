@@ -1,6 +1,8 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {titleUpdated} from '../../core/redux/action.creators';
 import {$} from '../../core/dom/Dom';
+import {ActiveRoute} from '../../core/router/ActiveRoute';
+import {STORAGE_PREFIX} from '../../core/utils';
 
 export class Header extends ExcelComponent {
   static className = 'excel__header'
@@ -9,14 +11,30 @@ export class Header extends ExcelComponent {
   constructor($root, options) {
       super($root, {
           name: 'Header',
-          listeners: ['input'],
+          listeners: ['input', 'click'],
           ...options
       });
+      this.deleteButton;
+      this.backToAppButton;
   }
 
   init() {
       super.init();
       this.renderInitialState(this.store.state);
+      this.deleteButton = $(`[data-action|='delete']`);
+      this.backToAppButton = $(`[data-action|='exit_to_app']`);
+  }
+
+  onClick(event) {
+      switch (event.target.dataset.action) {
+      case 'delete':
+          localStorage.removeItem(STORAGE_PREFIX + ActiveRoute.param[1]);
+          ActiveRoute.navigate('');
+          break;
+      case 'exit_to_app':
+          ActiveRoute.navigate('');
+          break;
+      }
   }
 
   renderInitialState(state) {
@@ -31,10 +49,10 @@ export class Header extends ExcelComponent {
 
       <div>
         <div class="button">
-          <i class="material-icons">delete</i>
+          <i class="material-icons" data-action="delete">delete</i>
         </div>
         <div class="button">
-          <i class="material-icons">exit_to_app</i>
+          <i class="material-icons" data-action="exit_to_app">exit_to_app</i>
         </div>
       </div>
     `;

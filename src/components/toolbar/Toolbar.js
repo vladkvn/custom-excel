@@ -40,19 +40,19 @@ export class Toolbar extends ExcelComponent {
           this.cellsWithStyleValue(styleName, styleValue).forEach((affectedCell)=>affectedCells.push(affectedCell));
       });
       if (affectedCells.length === this.selectedCells.length) {
-          element.$el.parentElement.classList.add('clicked');
+          element.$el.classList.add('clicked');
       } else {
-          element.$el.parentElement.classList.remove('clicked');
+          element.$el.classList.remove('clicked');
       }
   }
 
   renderState(state) {
-      const alignLeftButton = $(`[data-format|='format_align_left']`);
-      const alignRightButton = $(`[data-format|='format_align_right']`);
-      const alignCenterButton = $(`[data-format|='format_align_center']`);
-      const formatBoldButton = $(`[data-format|='format_bold']`);
-      const textDecorationUnderlineButton = $(`[data-format|='format_underlined']`);
-      const textStyleItalicButton = $(`[data-format|='format_italic']`);
+      const alignLeftButton = $(`div[data-format|='format_align_left']`);
+      const alignRightButton = $(`div[data-format|='format_align_right']`);
+      const alignCenterButton = $(`div[data-format|='format_align_center']`);
+      const formatBoldButton = $(`div[data-format|='format_bold']`);
+      const textDecorationUnderlineButton = $(`div[data-format|='format_underlined']`);
+      const textStyleItalicButton = $(`div[data-format|='format_italic']`);
       this.updateButton(alignLeftButton, 'text-align', ['left', '']);
       this.updateButton(alignRightButton, 'text-align', ['right']);
       this.updateButton(alignCenterButton, 'text-align', ['center']);

@@ -5,4 +5,5 @@ export const ACTION_TYPES = {
     ACTIVE_CELL_MOVED: 'activeCellMoved',
     STYLE_CHANGED: 'styleChanged',
     TITLE_UPDATED: 'titleUpdated',
+    TABLE_OPENED: 'tableOpened',
 };

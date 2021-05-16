@@ -1,6 +1,6 @@
 function createButton(name) {
     return `
-    <div class="button">
+    <div class="button" data-format="${name}">
         <i class="material-icons" data-format="${name}">${name}</i>
     </div>`;
 }

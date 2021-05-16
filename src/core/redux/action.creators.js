@@ -44,3 +44,10 @@ export function titleUpdated(data) {
         data
     };
 }
+
+export function tableOpened(data) {
+    return {
+        type: ACTION_TYPES.TABLE_OPENED,
+        data
+    };
+}

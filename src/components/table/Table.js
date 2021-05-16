@@ -4,10 +4,11 @@ import {resize} from './resize/TableResizer';
 import {selectCells} from './cellSelector/CellSelector';
 import {SelectedCellsManager} from './cellSelector/SelectedCellsManager';
 import {ActiveCellManager} from './cellSelector/ActiveCellManager';
-import {TableDataManager} from './data/TableDataManager';
 import {resizeColumn, resizeRow} from './resize/resize.helper';
 import {findCell, targetCellDetails} from './helper/table.helper';
 import {parse} from '../../core/utils';
+import {cellInput} from '../../core/redux/action.creators';
+import {EVENT_TYPES} from '../../core/events/EventTypes';
 
 
 export class Table extends ExcelComponent {
@@ -16,14 +17,14 @@ export class Table extends ExcelComponent {
   constructor($root, options) {
       super($root, {
           name: 'Table',
-          listeners: ['mousedown'],
+          listeners: ['mousedown', 'input'],
           subscribe: ['cellsData', 'colState', 'rowState'],
           ...options
       });
-      this.tableDataManager = new TableDataManager(this);
+      this.prevInputX;
+      this.prevInputY;
       this.components = [
           new SelectedCellsManager(this),
-          this.tableDataManager,
           new ActiveCellManager(this)];
   }
 
@@ -31,13 +32,21 @@ export class Table extends ExcelComponent {
   init() {
       super.init();
       this.components.forEach((component)=> component.init());
+      this.eventBus.subscribe(EVENT_TYPES.ACTIVE_CELL_MOVED, ()=> {
+          if (this.prevInputX && this.prevInputY) {
+              this.renderData(this.store.state, this.prevInputX, this.prevInputY);
+          }
+      });
       this.renderInitialState(this.store.state);
   }
 
   renderState(state, key) {
       switch (key) {
-      case 'cellsData':
-          this.renderData(state);
+      case 'cellsData': {
+          if (!document.activeElement.dataset.cellX) {
+              this.renderData(state, state.activeX, state.activeY);
+          }
+      }
           break;
       case 'colState':
           this.renderColumns(state);
@@ -64,8 +73,11 @@ export class Table extends ExcelComponent {
   }
 
   toHTML() {
-      return createTable();
+      // eslint-disable-next-line no-debugger
+      debugger;
+      return createTable(this.store.state.colCount, this.store.state.rowCount);
   }
+
 
   onMousedown(event) {
       const resizerType = event.target.dataset.resize;
@@ -90,10 +102,10 @@ export class Table extends ExcelComponent {
       }
   }
 
-  renderData(state) {
-      if (state.cellsData && state.activeX && state.activeY) {
-          const $activeCell = findCell(state.activeX, state.activeY);
-          $activeCell.$el.textContent = parse(state.cellsData[`${state.activeX}:${state.activeY}`]);
+  renderData(state, x, y) {
+      if (state.cellsData && x && y) {
+          const $activeCell = findCell(x, y);
+          $activeCell.$el.textContent = parse(state.cellsData[`${x}:${y}`]);
       }
   }
 
@@ -123,5 +135,16 @@ export class Table extends ExcelComponent {
               $cell.css(state.cellsStyle[key]);
           });
       }
+  }
+
+  onInput(event) {
+      this.prevInputX = event.target.dataset.cellX;
+      this.prevInputY = event.target.dataset.cellY;
+      const data= {
+          x: event.target.dataset.cellX,
+          y: event.target.dataset.cellY,
+          value: event.target.textContent.trim()
+      };
+      this.$dispatch(cellInput(data));
   }
 }

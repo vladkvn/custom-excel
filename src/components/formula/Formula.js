@@ -26,7 +26,7 @@ export class Formula extends ExcelComponent {
   renderState(state) {
       const activeX = state.activeX;
       const activeY = state.activeY;
-      if (activeX && activeY) {
+      if (activeX && activeY && state.cellsData && state.cellsData) {
           this.$targetCell = findCell(activeX, activeY);
           this.formulaElement.textContent = state.cellsData[`${activeX}:${activeY}`];
       }

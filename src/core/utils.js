@@ -1,3 +1,7 @@
+import {ActiveRoute} from './router/ActiveRoute';
+
+export const STORAGE_PREFIX = 'excel:';
+
 export function capitalizeFirstLetter(string) {
     if (typeof string !== 'string') {
         return '';
@@ -11,6 +15,10 @@ export function storage(key, data) {
         return JSON.parse(localStorage.getItem(key));
     }
     localStorage.setItem(key, JSON.stringify(data));
+}
+
+export function storageName() {
+    return STORAGE_PREFIX + ActiveRoute.param[1];
 }
 
 export function isEqual(a, b) {

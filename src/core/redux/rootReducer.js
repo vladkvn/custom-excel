@@ -36,6 +36,9 @@ export function rootReducer(state, action) {
     case ACTION_TYPES.TITLE_UPDATED: {
         return {...state, title: action.data.value};
     }
+    case ACTION_TYPES.TABLE_OPENED: {
+        return {...state, lastOpened: action.data.value};
+    }
     default:
         return state;
     }
