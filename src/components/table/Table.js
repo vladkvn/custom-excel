@@ -85,7 +85,7 @@ export class Table extends ExcelComponent {
           Object.keys(state.cellsData).forEach((key) => {
               const cellIndexes = key.split(':');
               const $cell = findCell(cellIndexes[0], cellIndexes[1]);
-              $cell.$el.textContent = state.cellsData[key];
+              $cell.$el.textContent = parse(state.cellsData[key]);
           });
       }
   }

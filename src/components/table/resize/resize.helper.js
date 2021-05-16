@@ -1,4 +1,4 @@
-import {$} from '../../../core/dom';
+import {$} from '../../../core/dom/Dom';
 
 export function resizeColumn(colIndex, newWidth) {
     const targetCells = $.all(`div[data-cell-x$="${colIndex}"]`);

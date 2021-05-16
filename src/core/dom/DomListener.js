@@ -1,4 +1,4 @@
-import {capitalizeFirstLetter} from './utils';
+import {capitalizeFirstLetter} from '../utils';
 
 export class DomListener {
     constructor($root, listeners = []) {

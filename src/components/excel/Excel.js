@@ -1,10 +1,9 @@
-import {$} from '../../core/dom';
+import {$} from '../../core/dom/Dom';
 import {EventBus} from '../../core/events/EventBus';
 import {StoreSubscriber} from '../../core/redux/StoreSubscriber';
 
 export class Excel {
-    constructor(selector, options) {
-        this.$el = $(selector);
+    constructor(options) {
         this.components = options.components || [];
         this.eventBus = new EventBus();
         this.store = options.store;
@@ -27,8 +26,7 @@ export class Excel {
         return $root;
     }
 
-    render() {
-        this.$el.append(this.getRoot());
+    init() {
         this.subscriber.subscribeComponents(this.components);
         this.components.forEach((component) => component.init());
     }

@@ -1,6 +1,6 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {titleUpdated} from '../../core/redux/action.creators';
-import {$} from '../../core/dom';
+import {$} from '../../core/dom/Dom';
 
 export class Header extends ExcelComponent {
   static className = 'excel__header'

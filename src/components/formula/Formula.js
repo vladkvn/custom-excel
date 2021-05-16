@@ -1,5 +1,5 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
-import {$} from '../../core/dom';
+import {$} from '../../core/dom/Dom';
 import {cellInput} from '../../core/redux/action.creators';
 import {findCell} from '../table/helper/table.helper';
 

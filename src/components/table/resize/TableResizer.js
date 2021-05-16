@@ -1,4 +1,4 @@
-import {$} from '../../../core/dom';
+import {$} from '../../../core/dom/Dom';
 import {ExcelComponent} from '../../../core/ExcelComponent';
 import {columnResize, rowResize} from '../../../core/redux/action.creators';
 import {resizeColumn, resizeRow} from './resize.helper';

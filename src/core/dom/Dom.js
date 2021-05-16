@@ -71,9 +71,8 @@ class Dom {
     }
 }
 
-// event.target
-export function $(selector, all=true) {
-    return new Dom(selector, all);
+export function $(selector) {
+    return new Dom(selector);
 }
 
 $.create = (tagName, classes = '') => {

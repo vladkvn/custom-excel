@@ -1,4 +1,4 @@
-import {$} from '../../../core/dom';
+import {$} from '../../../core/dom/Dom';
 import {findCell} from '../helper/table.helper';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ActiveCellMoved} from '../../../core/events/ActiveCellMoved';

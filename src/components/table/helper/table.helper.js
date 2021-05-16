@@ -1,4 +1,4 @@
-import {$} from '../../../core/dom';
+import {$} from '../../../core/dom/Dom';
 
 export function targetCellDetails(event) {
     const target = event.target;
