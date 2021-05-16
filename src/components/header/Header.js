@@ -21,8 +21,6 @@ export class Header extends ExcelComponent {
 
   renderInitialState(state) {
       if (state.title) {
-          // eslint-disable-next-line no-debugger
-          debugger;
           $('.excel__header .input').$el.value = state.title;
       }
   }
@@ -32,22 +30,17 @@ export class Header extends ExcelComponent {
       <input type="text" class="input" value="Новая таблица" />
 
       <div>
-
         <div class="button">
           <i class="material-icons">delete</i>
         </div>
-
         <div class="button">
           <i class="material-icons">exit_to_app</i>
         </div>
-
       </div>
     `;
   }
 
   onInput(event) {
-      // eslint-disable-next-line no-debugger
-      debugger;
       this.$dispatch(titleUpdated({value: event.target.value}));
   }
 }
