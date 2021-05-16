@@ -7,6 +7,7 @@ export class ExcelComponent extends DomListener {
         this.eventBus = options.eventBus;
         this.store = options.store;
         this.unsubscribers = [];
+        this.subscribe = options.subscribe || [];
     }
 
     toHTML() {
@@ -17,9 +18,15 @@ export class ExcelComponent extends DomListener {
         this.initDomListeners();
     }
 
+    renderState(state) {}
+
     destroy() {
         this.removeDomListeners();
         this.unsubscribers.forEach((unsub)=>unsub.unsubscribe());
+    }
+
+    isWatching(key) {
+        return this.subscribe.includes(key);
     }
 
     $subscribe(fn) {

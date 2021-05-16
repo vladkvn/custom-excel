@@ -1,4 +1,6 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
+import {titleUpdated} from '../../core/redux/action.creators';
+import {$} from '../../core/dom';
 
 export class Header extends ExcelComponent {
   static className = 'excel__header'
@@ -14,6 +16,15 @@ export class Header extends ExcelComponent {
 
   init() {
       super.init();
+      this.renderInitialState(this.store.state);
+  }
+
+  renderInitialState(state) {
+      if (state.title) {
+          // eslint-disable-next-line no-debugger
+          debugger;
+          $('.excel__header .input').$el.value = state.title;
+      }
   }
 
   toHTML() {
@@ -35,6 +46,8 @@ export class Header extends ExcelComponent {
   }
 
   onInput(event) {
-      console.log(event);
+      // eslint-disable-next-line no-debugger
+      debugger;
+      this.$dispatch(titleUpdated({value: event.target.value}));
   }
 }

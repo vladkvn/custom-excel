@@ -34,7 +34,6 @@ export class ActiveCellManager extends ExcelComponent {
             this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_STARTED, (event)=>this.listen(event)),
             this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event)));
         this.renderState(this.store.state);
-        this.$subscribe((state)=>this.renderState(state));
     }
 
     renderState(state) {

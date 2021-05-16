@@ -1,6 +1,7 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {$} from '../../core/dom';
 import {cellInput} from '../../core/redux/action.creators';
+import {findCell} from '../table/helper/table.helper';
 
 export class Formula extends ExcelComponent {
   static className = 'excel__formula'
@@ -9,25 +10,24 @@ export class Formula extends ExcelComponent {
       super($root, {
           name: 'Formula',
           listeners: ['input', 'keydown'],
+          subscribe: ['activeX', 'activeY', 'cellsData'],
           ...options
       });
       this.formulaElement;
-      this.targetCell;
+      this.$targetCell;
   }
 
   init() {
       super.init();
       this.formulaElement= $('[data-formula]').$el;
       this.renderState(this.store.state);
-      this.$subscribe((state)=>this.renderState(state));
   }
 
   renderState(state) {
-      // eslint-disable-next-line no-debugger
-      debugger;
       const activeX = state.activeX;
       const activeY = state.activeY;
       if (activeX && activeY) {
+          this.$targetCell = findCell(activeX, activeY);
           this.formulaElement.textContent = state.cellsData[`${activeX}:${activeY}`];
       }
   }
@@ -40,17 +40,22 @@ export class Formula extends ExcelComponent {
   }
 
   onInput(event) {
-      if (this.targetCell) {
-          this.$dispatch(cellInput(this.targetCell));
+      if (this.$targetCell) {
+          const data= {
+              x: this.$targetCell.$el.dataset.cellX,
+              y: this.$targetCell.$el.dataset.cellY,
+              value: this.formulaElement.textContent
+          };
+          this.$dispatch(cellInput(data));
       } else {
           event.preventDefault();
       }
   }
 
   onKeydown(event) {
-      if (event.key === 'Enter' && this.targetCell) {
+      if (event.key === 'Enter' && this.$targetCell) {
           event.preventDefault();
-          this.targetCell.focus();
+          this.$targetCell.$el.focus();
       }
   }
 }

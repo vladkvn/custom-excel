@@ -61,13 +61,12 @@ class Dom {
     }
 
     css(style = {}) {
-        const styleList = Object.keys(style).map((key)=>{
-            const mapResult = {};
-            mapResult.key = key;
-            mapResult.value = style[key];
-            return mapResult;
+        Object.keys(style).forEach((key)=>{
+            try {
+                this.$el.style[key] = style[key];
+                // eslint-disable-next-line no-empty
+            } catch (_) {}
         });
-        styleList.forEach((style)=> this.$el.style[style.key] = style.value);
         return this;
     }
 }

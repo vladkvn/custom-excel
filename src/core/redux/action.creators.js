@@ -14,14 +14,17 @@ export function rowResize(data) {
     };
 }
 
-export function cellInput(cell) {
+export function cellInput(data) {
     return {
         type: ACTION_TYPES.CELL_INPUT,
-        data: {
-            x: cell.dataset.cellX,
-            y: cell.dataset.cellY,
-            value: cell.textContent.trim()
-        }
+        data
+    };
+}
+
+export function styleUpdated(data) {
+    return {
+        type: ACTION_TYPES.STYLE_CHANGED,
+        data
     };
 }
 
@@ -32,5 +35,12 @@ export function activeCellMoved(cell) {
             x: cell.$el.dataset.cellX,
             y: cell.$el.dataset.cellY
         }
+    };
+}
+
+export function titleUpdated(data) {
+    return {
+        type: ACTION_TYPES.TITLE_UPDATED,
+        data
     };
 }

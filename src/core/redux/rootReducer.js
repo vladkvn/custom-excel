@@ -21,6 +21,21 @@ export function rootReducer(state, action) {
     case ACTION_TYPES.ACTIVE_CELL_MOVED: {
         return {...state, activeX: action.data.x, activeY: action.data.y};
     }
+    case ACTION_TYPES.STYLE_CHANGED: {
+        prevState = state.cellsStyle || {};
+        const newState = {...prevState};
+        action.data.cells.map((cell)=>cell.$el).forEach((cell) => {
+            const savingStyles = {};
+            Object.keys(cell.style).filter((key)=>!!cell.style[key]).forEach((key)=> {
+                savingStyles[key] = cell.style[key];
+            });
+            newState[`${cell.dataset.cellX}:${cell.dataset.cellY}`] = savingStyles;
+        });
+        return {...state, cellsStyle: newState};
+    }
+    case ACTION_TYPES.TITLE_UPDATED: {
+        return {...state, title: action.data.value};
+    }
     default:
         return state;
     }

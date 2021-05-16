@@ -1,58 +1,79 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {EVENT_TYPES} from '../../core/events/EventTypes';
-import {CellStyleUpdatedEvent} from '../../core/events/CellStyleUpdatedEvent';
-export const DEFAULT_ALIGN = 'left';
-export const DEFAULT_FONT_SIZE = 'left';
-export const DEFAULT_FONT_STYLE = 'left';
+import {styleUpdated} from '../../core/redux/action.creators';
+import {createToolbar} from './toolbar.helper';
+import {$} from '../../core/dom';
+import {findCell} from '../table/helper/table.helper';
+export const DEFAULT_ALIGN = '';
+export const DEFAULT_FONT_SIZE = '';
+export const DEFAULT_FONT_STYLE = '';
 export const DEFAULT_TEXT_DECORATOR = 'none';
+
+const START_TIME_MS = 200;
 
 export class Toolbar extends ExcelComponent {
   static className = 'excel__toolbar'
-
 
   constructor($root, options) {
       super($root, {
           name: 'Toolbar',
           listeners: ['click'],
-          ...options
+          ...options,
+          subscribe: ['cellsStyle', 'activeX', 'activeY']
       });
       this.selectedCells = [];
   }
 
   toHTML() {
-      return `
-      <div class="button">
-        <i class="material-icons" data-format="format_align_left">format_align_left</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons" data-format="format_align_center">format_align_center</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons" data-format="format_align_right">format_align_right</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons" data-format="format_bold">format_bold</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons" data-format="format_italic">format_italic</i>
-      </div>
-
-      <div class="button">
-        <i class="material-icons" data-format="format_underlined">format_underlined</i>
-      </div>
-    `;
+      return createToolbar([
+          'format_align_left',
+          'format_align_center',
+          'format_align_right',
+          'format_bold',
+          'format_italic',
+          'format_underlined']);
   }
 
+  updateButton(element, styleName, styleValues) {
+      const affectedCells = [];
+      styleValues.map((styleValue)=> {
+          this.cellsWithStyleValue(styleName, styleValue).forEach((affectedCell)=>affectedCells.push(affectedCell));
+      });
+      if (affectedCells.length === this.selectedCells.length) {
+          element.$el.parentElement.classList.add('clicked');
+      } else {
+          element.$el.parentElement.classList.remove('clicked');
+      }
+  }
+
+  renderState(state) {
+      const alignLeftButton = $(`[data-format|='format_align_left']`);
+      const alignRightButton = $(`[data-format|='format_align_right']`);
+      const alignCenterButton = $(`[data-format|='format_align_center']`);
+      const formatBoldButton = $(`[data-format|='format_bold']`);
+      const textDecorationUnderlineButton = $(`[data-format|='format_underlined']`);
+      const textStyleItalicButton = $(`[data-format|='format_italic']`);
+      this.updateButton(alignLeftButton, 'text-align', ['left', '']);
+      this.updateButton(alignRightButton, 'text-align', ['right']);
+      this.updateButton(alignCenterButton, 'text-align', ['center']);
+      this.updateButton(formatBoldButton, 'font-weight', ['bold']);
+      this.updateButton(textDecorationUnderlineButton, 'text-decoration', ['underline']);
+      this.updateButton(textStyleItalicButton, 'font-style', ['italic']);
+  }
 
   init() {
       super.init();
       this.unsubscribers.push(
           this.eventBus.subscribe(EVENT_TYPES.CELLS_SELECTION_FINISHED, (event)=>this.listen(event))
       );
+      this.renderInitialState(this.store.state);
+  }
+
+  renderInitialState(state) {
+      if (state.activeX && state.activeY) {
+          this.selectedCells = [findCell(state.activeX, state.activeY)];
+      }
+      setTimeout(()=>this.renderState(state), START_TIME_MS);
   }
 
   onClick(event) {
@@ -95,7 +116,7 @@ export class Toolbar extends ExcelComponent {
   }
 
   fontStyleItalicButtonBehaviour() {
-      this.processFormatButtonBehaviour('font-weight', 'italic', DEFAULT_FONT_STYLE);
+      this.processFormatButtonBehaviour('font-style', 'italic', DEFAULT_FONT_STYLE);
   }
 
   underlineButtonBehaviour() {
@@ -108,21 +129,19 @@ export class Toolbar extends ExcelComponent {
       });
   }
 
-  setCellsStyleAndPublishEvent(styleName, styleValue) {
-      const style = {};
-      style[styleName] = styleValue;
+  setCellsStyle(styleName, styleValue) {
       this.selectedCells.forEach((cell)=>{
-          cell.css(style);
-          this.eventBus.publish(EVENT_TYPES.CELL_STYLE_UPDATED, new CellStyleUpdatedEvent(cell));
+          cell.css({[styleName]: styleValue});
       });
+      this.$dispatch(styleUpdated({cells: this.selectedCells, styleName, styleValue}));
   }
 
   processFormatButtonBehaviour(styleName, styleValue, defaultValue) {
       const alreadyAlignedCells = this.cellsWithStyleValue(styleName, styleValue);
       if (alreadyAlignedCells.length !== this.selectedCells.length) {
-          this.setCellsStyleAndPublishEvent(styleName, styleValue);
+          this.setCellsStyle(styleName, styleValue);
       } else {
-          this.setCellsStyleAndPublishEvent(styleName, defaultValue);
+          this.setCellsStyle(styleName, defaultValue);
       }
   }
 }

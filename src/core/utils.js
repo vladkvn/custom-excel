@@ -12,3 +12,34 @@ export function storage(key, data) {
     }
     localStorage.setItem(key, JSON.stringify(data));
 }
+
+export function isEqual(a, b) {
+    if (!!a && !!b && typeof a === 'object' && typeof b === 'object') {
+        return JSON.stringify(a) === JSON.stringify(b);
+    }
+    return a === b;
+}
+
+export function parse(valueString) {
+    if (valueString && valueString[0] === '=') {
+        try {
+            return eval(valueString.substr(1));
+        } catch (_) {
+            return valueString;
+        }
+    }
+    return valueString;
+}
+
+
+export function debounce(fn, ms) {
+    let timeout;
+    return function(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            fn(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, ms);
+    };
+}
