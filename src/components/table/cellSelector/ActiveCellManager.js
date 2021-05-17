@@ -132,7 +132,10 @@ export class ActiveCellManager extends ExcelComponent {
         }
         if (!this.firstRowInSelection()) {
             this.updateActiveIndicates(this.focusX, this.focusY - 1);
-        } else if (!this.firstColInSelection()) {
+            this.updateActiveCell();
+            return;
+        }
+        if (!this.firstColInSelection()) {
             this.updateActiveIndicates(this.focusX - 1, this.y2);
         } else {
             this.updateActiveIndicates(this.x2, this.y2);
@@ -147,7 +150,10 @@ export class ActiveCellManager extends ExcelComponent {
         }
         if (!this.lastRowInSelection()) {
             this.updateActiveIndicates(this.focusX, this.focusY + 1);
-        } else if (!this.lastColInSelection()) {
+            this.updateActiveCell();
+            return;
+        }
+        if (!this.lastColInSelection()) {
             this.updateActiveIndicates(this.focusX + 1, this.y1);
         } else {
             this.updateActiveIndicates(this.x1, this.y1);
@@ -192,7 +198,10 @@ export class ActiveCellManager extends ExcelComponent {
         }
         if (!this.firstColInSelection()) {
             this.updateActiveIndicates(this.focusX - 1, this.focusY);
-        } else if (!this.firstRowInSelection()) {
+            this.updateActiveCell();
+            return;
+        }
+        if (!this.firstRowInSelection()) {
             this.updateActiveIndicates(this.x2, this.focusY - 1);
         } else {
             this.updateActiveIndicates(this.x2, this.y2);
@@ -207,7 +216,10 @@ export class ActiveCellManager extends ExcelComponent {
         }
         if (!this.lastColInSelection()) {
             this.updateActiveIndicates(this.focusX + 1, this.focusY);
-        } else if (!this.lastRowInSelection()) {
+            this.updateActiveCell();
+            return;
+        }
+        if (!this.lastRowInSelection()) {
             this.updateActiveIndicates(this.x1, this.focusY + 1);
         } else {
             this.updateActiveIndicates(this.x1, this.y1);

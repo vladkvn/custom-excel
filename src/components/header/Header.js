@@ -7,15 +7,14 @@ import {STORAGE_PREFIX} from '../../core/utils';
 export class Header extends ExcelComponent {
   static className = 'excel__header'
 
-
   constructor($root, options) {
       super($root, {
           name: 'Header',
           listeners: ['input', 'click'],
           ...options
       });
-      this.deleteButton;
-      this.backToAppButton;
+      this.deleteButton = undefined;
+      this.backToAppButton = undefined;
   }
 
   init() {

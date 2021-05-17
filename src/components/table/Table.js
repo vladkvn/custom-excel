@@ -40,8 +40,8 @@ export class Table extends ExcelComponent {
       this.renderInitialState(this.store.state);
   }
 
-  renderState(state, key) {
-      switch (key) {
+  renderState(state, updatedStateFieldKey) {
+      switch (updatedStateFieldKey) {
       case 'cellsData': {
           if (!document.activeElement.dataset.cellX) {
               this.renderData(state, state.activeX, state.activeY);
@@ -73,8 +73,6 @@ export class Table extends ExcelComponent {
   }
 
   toHTML() {
-      // eslint-disable-next-line no-debugger
-      debugger;
       return createTable(this.store.state.colCount, this.store.state.rowCount);
   }
 
