@@ -1,5 +1,5 @@
 import {$} from '../../core/dom/Dom';
-import {createRecordsTable} from './dashboard.functions';
+import {createRecordsTable} from './dashboardFunctions';
 
 export class Dashboard {
     constructor() {

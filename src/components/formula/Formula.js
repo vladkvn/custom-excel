@@ -1,7 +1,7 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {$} from '../../core/dom/Dom';
-import {cellInput} from '../../core/redux/action.creators';
-import {findCell} from '../table/helper/table.helper';
+import {cellInput} from '../../core/redux/actionCreators';
+import {findCell} from '../table/helper/tableHelper';
 
 export class Formula extends ExcelComponent {
   static className = 'excel__formula'

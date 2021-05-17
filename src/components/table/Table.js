@@ -1,13 +1,13 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
-import {createTable} from './helper/table.template';
+import {createTable} from './helper/tableTemplate';
 import {resize} from './resize/TableResizer';
 import {selectCells} from './cellSelector/CellSelector';
 import {SelectedCellsManager} from './cellSelector/SelectedCellsManager';
 import {ActiveCellManager} from './cellSelector/ActiveCellManager';
-import {resizeColumn, resizeRow} from './resize/resize.helper';
-import {findCell, targetCellDetails} from './helper/table.helper';
+import {resizeColumn, resizeRow} from './resize/resizeHelper';
+import {findCell, targetCellDetails} from './helper/tableHelper';
 import {parse} from '../../core/utils';
-import {cellInput} from '../../core/redux/action.creators';
+import {cellInput} from '../../core/redux/actionCreators';
 import {EVENT_TYPES} from '../../core/events/EventTypes';
 
 

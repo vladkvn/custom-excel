@@ -1,5 +1,5 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
-import {titleUpdated} from '../../core/redux/action.creators';
+import {titleUpdated} from '../../core/redux/actionCreators';
 import {$} from '../../core/dom/Dom';
 import {ActiveRoute} from '../../core/router/ActiveRoute';
 import {STORAGE_PREFIX} from '../../core/utils';

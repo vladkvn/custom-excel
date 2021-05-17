@@ -1,9 +1,9 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {EVENT_TYPES} from '../../core/events/EventTypes';
-import {styleUpdated} from '../../core/redux/action.creators';
+import {styleUpdated} from '../../core/redux/actionCreators';
 import {createToolbar} from './toolbar.helper';
 import {$} from '../../core/dom/Dom';
-import {findCell} from '../table/helper/table.helper';
+import {findCell} from '../table/helper/tableHelper';
 export const DEFAULT_ALIGN = '';
 export const DEFAULT_FONT_SIZE = '';
 export const DEFAULT_FONT_STYLE = '';

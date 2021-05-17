@@ -1,4 +1,4 @@
-import {clearCellsView, findCell, targetCellDetails, updateCellsView} from '../helper/table.helper';
+import {clearCellsView, findCell, targetCellDetails, updateCellsView} from '../helper/tableHelper';
 import {SelectingResult} from '../../../core/events/SelectingResult';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ExcelComponent} from '../../../core/ExcelComponent';

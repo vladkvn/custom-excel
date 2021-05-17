@@ -1,4 +1,4 @@
-import {clearCellsView, updateCellsView} from '../helper/table.helper';
+import {clearCellsView, updateCellsView} from '../helper/tableHelper';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ExcelComponent} from '../../../core/ExcelComponent';
 

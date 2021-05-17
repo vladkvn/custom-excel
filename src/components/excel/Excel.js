@@ -1,7 +1,7 @@
 import {$} from '../../core/dom/Dom';
 import {EventBus} from '../../core/events/EventBus';
 import {StoreSubscriber} from '../../core/redux/StoreSubscriber';
-import {tableOpened} from '../../core/redux/action.creators';
+import {tableOpened} from '../../core/redux/actionCreators';
 
 export class Excel {
     constructor(options) {

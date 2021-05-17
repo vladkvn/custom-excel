@@ -1,9 +1,9 @@
 import {$} from '../../../core/dom/Dom';
-import {findCell} from '../helper/table.helper';
+import {findCell} from '../helper/tableHelper';
 import {EVENT_TYPES} from '../../../core/events/EventTypes';
 import {ActiveCellMoved} from '../../../core/events/ActiveCellMoved';
 import {ExcelComponent} from '../../../core/ExcelComponent';
-import {activeCellMoved} from '../../../core/redux/action.creators';
+import {activeCellMoved} from '../../../core/redux/actionCreators';
 
 const FOCUS = 'focus';
 const MIN_X = 1;

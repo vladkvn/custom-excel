@@ -1,4 +1,4 @@
-import {ACTION_TYPES} from './action.types';
+import {ACTION_TYPES} from './actionTypes';
 
 export function rootReducer(state, action) {
     let prevState;
